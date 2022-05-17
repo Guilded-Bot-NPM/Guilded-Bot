@@ -5,6 +5,10 @@ class User {
             this.id = userData.id;
         }
 
+        if (userData.botId) {
+            this.botId = userData.botId;
+        }
+
         if (userData.serverId) {
             this.serverId = userData.serverId;
         }
@@ -24,6 +28,10 @@ class User {
 
         if (userData.banner) {
             this.banner = userData.banner;
+        }
+
+        if (userData.createdBy) {
+            this.createdBy = userData.createdBy;
         }
 
         //Create function to get user's profile picture

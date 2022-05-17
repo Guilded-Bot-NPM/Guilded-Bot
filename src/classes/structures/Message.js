@@ -97,7 +97,6 @@ class Message {
       this.replyMessageIds = messageData.replyMessageIds;
     } else {
       this.hasReplies = false;
-      this.replyMessageIds = null;
     }
     if (messageData.isPrivate) {
       this.private = true;

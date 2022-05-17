@@ -13,19 +13,27 @@ module.exports = new (class {
       : null;
     let embeds = Object.embeds ? Object.embeds : null;
 
+    let final_Json = {
+      content: message,
+      isPrivate: isPrivate ? true : false,
+      isSilent: isSilent ? true : false
+    }
+
+    if(replyMessageIds) {
+      final_Json.replyMessageIds = replyMessageIds;
+    }
+
+    if(embeds) {
+      final_Json.embeds = embeds;
+    }
+
     return await fetch(`${endpoints.CHANNELS_MESSAGES(channelId)}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        content: message,
-        isPrivate: isPrivate ? true : false,
-        isSilent: isSilent ? true : false,
-        replyMessageIds: replyMessageIds ? replyMessageIds : null,
-        embeds: embeds ? embeds : null,
-      }),
+      body: JSON.stringify(final_Json),
     }).then(async (res) => {
       const data = await res.json();
       //Make a new message object
@@ -33,7 +41,7 @@ module.exports = new (class {
       const Messages = require("../classes/structures/Message");
       const Message = new Messages.Message(authToken, messageData);
       return Message;
-    });
+    }).catch( (err) => err);
   }
 
   async editMessage(Object) {
@@ -48,25 +56,33 @@ module.exports = new (class {
     let embeds = Object.embeds ? Object.embeds : null;
     let messageId = Object.id;
 
+    let final_Json = {
+      content: message,
+      isPrivate: isPrivate ? true : false,
+      isSilent: isSilent ? true : false
+    }
+
+    if(replyMessageIds) {
+      final_Json.replyMessageIds = replyMessageIds;
+    }
+
+    if(embeds) {
+      final_Json.embeds = embeds;
+    }
+
     return await fetch(`${endpoints.EDIT_MESSSAGE(channelId, messageId)}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${authToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        content: message,
-        isPrivate: isPrivate ? true : false,
-        isSilent: isSilent ? true : false,
-        replyMessageIds: replyMessageIds ? replyMessageIds : null,
-        embeds: embeds ? embeds : null,
-      }),
+      body: JSON.stringify(final_Json),
     }).then(async (res) => {
       const messageData = (await res.json()).message;
-      const Messages = require("../classes/Message.js");
+      const Messages = require("../classes/structures/Message.js");
       const Message = new Messages.Message(authToken, messageData);
       return Message;
-    });
+    }).catch( (err) => err);
   }
 
   async deleteMessage(Object) {
@@ -92,7 +108,7 @@ module.exports = new (class {
 
       const data = await res.json();
       return data;
-    });
+    }).catch( (err) => err);
   }
 
   async reactMessage(Object) {

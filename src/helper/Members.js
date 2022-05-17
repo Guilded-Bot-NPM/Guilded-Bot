@@ -12,7 +12,12 @@ module.exports = new (class {
           "Content-Type": "application/json",
         },
       }
-    ).then(async (res) => await res.json());
+    ).then(async (res) => await res.json()).catch( (err) => err);
+
+    if (userData.code) {
+      return null;
+    }
+
     return new User(userData.member.user);
   }
 })();

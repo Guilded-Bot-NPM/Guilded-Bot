@@ -63,6 +63,14 @@ class Client extends EventEmitter {
             this.emit('serverWebhookUpdate', webhook);
         });
 
+        this.ws.on('messageReactionCreated', (reaction) => {
+            this.emit('messageReactionCreated', reaction);
+        });
+
+        this.ws.on('ChannelMessageReactionDeleted', (reaction) => {
+            this.emit('ChannelMessageReactionDeleted', reaction);
+        })
+
         this.ws.on('closed', () => {
             this.emit('disconnect');
         });

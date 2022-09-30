@@ -1,7 +1,20 @@
 const { endpoints } = require("./endpoints");
-const fetch = require("node-fetch");
+const axios = require("axios");
 
 module.exports = new (class {
+  /**
+   * Send a message to a selected channel
+   * @param {*} Object
+   * @param {Object} content The content of the message
+   * @param {String} content.content The content of the message
+   * @param {String} content.channelId The channel id of the message
+   * @param {String} content.authToken The auth token of the bot
+   * @param {Boolean} content.isPrivate If the message is private
+   * @param {Boolean} content.isSilent If the message is silent
+   * @param {Array} content.replyMessageIds The message ids to reply to
+   * @param {Array} content.embeds The embeds to send
+   * @returns {Promise} The message object
+   */
   async sendMessage(Object) {
     let message = Object.content;
     let channelId = Object.channelId;
@@ -16,32 +29,32 @@ module.exports = new (class {
     let final_Json = {
       content: message,
       isPrivate: isPrivate ? true : false,
-      isSilent: isSilent ? true : false
-    }
+      isSilent: isSilent ? true : false,
+    };
 
-    if(replyMessageIds) {
+    if (replyMessageIds) {
       final_Json.replyMessageIds = replyMessageIds;
     }
 
-    if(embeds) {
+    if (embeds) {
       final_Json.embeds = embeds;
     }
 
-    return await fetch(`${endpoints.CHANNELS_MESSAGES(channelId)}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(final_Json),
-    }).then(async (res) => {
-      const data = await res.json();
-      //Make a new message object
-      const messageData = data.message;
-      const Messages = require("../classes/structures/Message");
-      const Message = new Messages.Message(authToken, messageData);
-      return Message;
-    }).catch( (err) => err);
+    return await axios
+      .post(`${endpoints.CHANNELS_MESSAGES(channelId)}`, final_Json, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        //Make a new message object
+        const messageData = res.data.message;
+        const Messages = require("../classes/structures/Message");
+        const Message = new Messages.Message(authToken, messageData);
+        return Message;
+      })
+      .catch((err) => err);
   }
 
   async editMessage(Object) {
@@ -59,30 +72,32 @@ module.exports = new (class {
     let final_Json = {
       content: message,
       isPrivate: isPrivate ? true : false,
-      isSilent: isSilent ? true : false
-    }
+      isSilent: isSilent ? true : false,
+    };
 
-    if(replyMessageIds) {
+    if (replyMessageIds) {
       final_Json.replyMessageIds = replyMessageIds;
     }
 
-    if(embeds) {
+    if (embeds) {
       final_Json.embeds = embeds;
     }
 
-    return await fetch(`${endpoints.EDIT_MESSSAGE(channelId, messageId)}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(final_Json),
-    }).then(async (res) => {
-      const messageData = (await res.json()).message;
-      const Messages = require("../classes/structures/Message.js");
-      const Message = new Messages.Message(authToken, messageData);
-      return Message;
-    }).catch( (err) => err);
+    return await axios
+      .put(`${endpoints.EDIT_MESSSAGE(channelId, messageId)}`, final_Json, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        //Make a new message object
+        const messageData = res.data.message;
+        const Messages = require("../classes/structures/Message");
+        const Message = new Messages.Message(authToken, messageData);
+        return Message;
+      })
+      .catch((err) => err);
   }
 
   async deleteMessage(Object) {
@@ -95,20 +110,22 @@ module.exports = new (class {
     //Wait for timeout
     await new Promise((resolve) => setTimeout(resolve, timeout));
 
-    return await fetch(`${endpoints.DELETE_MESSAGE(channelId, messageId)}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        "Content-Type": "application/json",
-      },
-    }).then(async (res) => {
-      if (res.status === 204) {
-        return "Message deleted";
-      }
+    return await axios
+      .delete(`${endpoints.DELETE_MESSAGE(channelId, messageId)}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        //Make a new message object
+        if (res.status === 204) {
+          return "Message deleted";
+        }
 
-      const data = await res.json();
-      return data;
-    }).catch( (err) => err);
+        return res.data;
+      })
+      .catch((err) => err);
   }
 
   async reactMessage(Object) {
@@ -117,24 +134,30 @@ module.exports = new (class {
     let messageId = Object.id;
     let emojiId = Object.emojiId;
 
-    return await fetch(`${endpoints.REACT_MESSAGE(channelId, messageId, emojiId)}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        "Content-Type": "application/json",
-      },
-    }).then(async (res) => {
-      if (res.status === 204) {
-        return "Message reacted";
-      }
+    return await axios
+      .put(
+        `${endpoints.REACT_MESSAGE(channelId, messageId, emojiId)}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 204) {
+          return "Message reacted";
+        }
 
-      const data = await res.json();
+        const data = res.data;
 
-      if(data.code) {
-        return data.message;
-      }
+        if (data.code) {
+          return data.message;
+        }
 
-      return data;
-    });
+        return data;
+      })
+      .catch((err) => err);
   }
 })();

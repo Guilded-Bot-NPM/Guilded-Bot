@@ -15,6 +15,8 @@ class UserSummary {
         } else {
             this.name = null;
         }
+
+        this.raw = userData;
     }
 }
 

@@ -8,15 +8,13 @@ class Member {
         if (memberData.serverId) {
             this.serverId = memberData.serverId;
         }
-        if (memberData.member) {
-            if (memberData.member.user) {
-                this.user = new User(memberData.member.user);
-            }
+        if (memberData.user) {
+                this.user = new User(memberData.user);
         } else {
             this.user = null;
         }
-        if (memberData.memberRoleIds) {
-            this.roles = memberData.memberRoleIds;
+        if (memberData.roleIds) {
+            this.roles = memberData.roleIds;
         } else {
             this.roles = null;
         }
@@ -26,7 +24,7 @@ class Member {
             this.nickname = null;
         }
         if (memberData.joinedAt) {
-            this.joinedAt = memberData.joinedAt;
+            this.joinedAt = (new Date(memberData.joinedAt)).getTime() / 1000;
         } else {
             this.joinedAt = null;
         }
@@ -48,6 +46,10 @@ class Member {
         } else {
             this.updatedInfo = null;
         }
+
+        this.isOwner = memberData.isOwner;
+
+        this.raw = memberData;
     }
 }
 

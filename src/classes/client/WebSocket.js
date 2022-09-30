@@ -5,6 +5,7 @@ const { User } = require("../user/User");
 const { Member } = require("../user/Member");
 const { MemberBan } = require("../user/MemberBan");
 const { Webhook } = require("../webhook/Webhook");
+const { Reaction } = require("../structures/Reaction");
 
 let bot_id = "";
 
@@ -76,7 +77,6 @@ class ClientWebSocket extends EventEmitter {
             );
             break;
           case "TeamMemberJoined":
-            console.log(eventData);
             this.emit("memberAdded", new Member(eventData));
             break;
           case "TeamMemberRemoved":
@@ -100,6 +100,10 @@ class ClientWebSocket extends EventEmitter {
           case "TeamWebhookUpdated":
             this.emit("webhookUpdated", new Webhook(eventData));
             break;
+          case "ChannelMessageReactionCreated":
+            this.emit("messageReactionCreated", new Reaction(eventData));
+          case "ChannelMessageReactionDeleted":
+            this.emit("messageReactionDeleted", new Reaction(eventData));
         }
       } catch (e) {
         this.emit("error", e);

@@ -287,11 +287,11 @@ class Message {
      * message.getUser("123456789");
      */
 
-    (this.getUser = async (userId) => {
+    this.getUser = async (userId) => {
       return userId
         ? await guser.getUser(userId, this.server.id, token)
         : await guser.getUser(messageData.createdBy, this.server.id, token);
-    }),
+    },
       /**
        * Get the member object of the author of the message or the member you want to get
        * @param {string} userId optional - The user id of the member you want to get info from
@@ -301,11 +301,11 @@ class Message {
        * message.getMember("123456789");
        */
 
-      (this.getMember = async (userId) => {
+      this.getMember = async (userId) => {
         return userId
           ? await guser.getMember(userId, this.server.id, token)
           : await guser.getMember(messageData.createdBy, this.server.id, token);
-      });
+      };
   }
 }
 

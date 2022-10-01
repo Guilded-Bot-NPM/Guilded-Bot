@@ -18,8 +18,8 @@ class MessageEmbed {
 
   /**
    * Set the description of the embed
-   * @param {string} description
-   * @returns {MessageEmbed}
+   * @param {string} description - The description of the embed
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setDescription('This is a description');
    */
@@ -32,8 +32,8 @@ class MessageEmbed {
 
   /**
    * Set a URL for the embed
-   * @param {String} url
-   * @returns {MessageEmbed}
+   * @param {String} url - The URL
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setURL('https://guilded.gg');
    */
@@ -48,8 +48,8 @@ class MessageEmbed {
 
   /**
    * Set the color of the embed
-   * @param {string | number} color
-   * @returns {MessageEmbed}
+   * @param {string | number} color - The color of the embed
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setColor('#0099ff');
    * embed.setColor(0x0099ff);
@@ -120,8 +120,10 @@ class MessageEmbed {
 
   /**
    * Set the footer for the embed
-   * @param {Object} footer
-   * @returns {MessageEmbed}
+   * @param {Object} footer - The footer object
+   * @param {string} footer.text - The text of the footer
+   * @param {string | undefined} footer.icon - The icon of the footer
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setFooter({text: 'This is a footer', icon: 'https://i.imgur.com/sINzKh7.png'});
    */
@@ -139,8 +141,8 @@ class MessageEmbed {
 
   /**
    * Set the time for the embed
-   * @param {Date} time
-   * @returns {MessageEmbed}
+   * @param {Date | undefined} date - The date for the embed
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setTime(new Date());
    * embed.setTime(Date.now());
@@ -153,8 +155,8 @@ class MessageEmbed {
 
   /**
    * Set the thumbnail for the embed
-   * @param {string} url
-   * @returns {MessageEmbed}
+   * @param {string} url - The url of the thumbnail
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setThumbnail('https://i.imgur.com/sINzKh7.png');
    */
@@ -171,8 +173,8 @@ class MessageEmbed {
 
   /**
    * Set the image for the embed
-   * @param {string} url
-   * @returns {MessageEmbed}
+   * @param {string} url - The url of the image
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setImage('https://i.imgur.com/sINzKh7.png');
    */
@@ -190,10 +192,13 @@ class MessageEmbed {
 
   /**
    * Set the author for the embed
-   * @param {Object} author
-   * @returns {MessageEmbed}
+   * @param {Object} author - The author object
+   * @param {string} author.name - The name of the author
+   * @param {string | undefined} author.icon - The icon of the author
+   * @param {string | undefined} author.url - The url of the author
+   * @returns {MessageEmbed} - The embed
    * @example
-   * embed.setAuthor('Guilded', 'https://i.imgur.com/sINzKh7.png', 'https://guilded.gg');
+   * embed.setAuthor({name: 'Guilded', icon: 'https://i.imgur.com/sINzKh7.png', url: 'https://guilded.gg'});
    */
   setAuthor(author = {}) {
     if (!author.name) return this;
@@ -211,8 +216,8 @@ class MessageEmbed {
 
   /**
    * Set the fields for the embed, all fields must be an array of field objects
-   * @param {Array} fields
-   * @returns {MessageEmbed}
+   * @param {Array<field>} fields - The fields for the embed
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.setFields([
    *  {
@@ -251,8 +256,8 @@ class MessageEmbed {
 
   /**
    * Add a field to the embed
-   * @param {Object} field
-   * @returns {MessageEmbed}
+   * @param {field} field - The field to add
+   * @returns {MessageEmbed} - The embed
    * @example
    * embed.addField({
    *    name: 'Field 1',

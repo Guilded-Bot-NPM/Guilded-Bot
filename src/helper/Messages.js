@@ -1,7 +1,7 @@
 const { endpoints } = require("./EndPoints");
 const axios = require("axios");
 
-module.exports = new (class {
+module.exports = {
   /**
    * Send a message to a selected channel
    * @param {*} Object
@@ -13,8 +13,9 @@ module.exports = new (class {
    * @param {Boolean} content.isSilent If the message is silent
    * @param {Array} content.replyMessageIds The message ids to reply to
    * @param {Array} content.embeds The embeds to send
+   * @returns {Message} The message object
    * @private
-   * @returns {Promise} The message object
+   * @ignore
    */
   async sendMessage(Object) {
     let message = Object.content;
@@ -46,12 +47,12 @@ module.exports = new (class {
       .then((res) => {
         //Make a new message object
         const messageData = res.data.message;
-        const Messages = require("../classes/structures/Message");
+        const Messages = require("../classes/Structures/Message");
         const Message = new Messages.Message(authToken, messageData);
         return Message;
       })
       .catch((err) => err);
-  }
+  },
 
   /**
    * Edit a message in a selected channel
@@ -63,7 +64,9 @@ module.exports = new (class {
    * @param {Boolean} content.isSilent If the message is silent
    * @param {Array} content.replyMessageIds The message ids to reply to
    * @param {Array} content.embeds The embeds to send
+   * @return {Message} The message object
    * @private
+   * @ignore
    */
   async editMessage(Object) {
     let message = Object.content;
@@ -92,7 +95,7 @@ module.exports = new (class {
     }
 
     return await axios
-      .put(`${endpoints.EDIT_MESSSAGE(channelId, messageId)}`, final_Json, {
+      .put(`${endpoints.MESSSAGE(channelId, messageId)}`, final_Json, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
@@ -101,12 +104,12 @@ module.exports = new (class {
       .then((res) => {
         //Make a new message object
         const messageData = res.data.message;
-        const Messages = require("../classes/structures/Message");
+        const Messages = require("../classes/Structures/Message");
         const Message = new Messages.Message(authToken, messageData);
         return Message;
       })
       .catch((err) => err);
-  }
+  },
 
   /**
    * Delete a message in a selected channel
@@ -115,7 +118,9 @@ module.exports = new (class {
    * @param {String} content.authToken The auth token of the bot
    * @param {String} content.id The message id
    * @param {Number} content.timeout The timeout of the message
+   * @return {Message} The message object
    * @private
+   * @ignore
    */
   async deleteMessage(Object) {
     let channelId = Object.channelId;
@@ -128,7 +133,7 @@ module.exports = new (class {
     await new Promise((resolve) => setTimeout(resolve, timeout));
 
     return await axios
-      .delete(`${endpoints.DELETE_MESSAGE(channelId, messageId)}`, {
+      .delete(`${endpoints.MESSSAGE(channelId, messageId)}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
@@ -143,7 +148,7 @@ module.exports = new (class {
         return res.data;
       })
       .catch((err) => err);
-  }
+  },
 
   /**
    * Reacy to a message in a selected channel
@@ -152,7 +157,9 @@ module.exports = new (class {
    * @param {String} content.authToken The auth token of the bot
    * @param {String} content.id The message id
    * @param {String} content.emojiId The emoji id
+   * @returns {Reaction} The reaction object
    * @private
+   * @ignore
    */
   async reactMessage(Object) {
     let channelId = Object.channelId;
@@ -185,5 +192,5 @@ module.exports = new (class {
         return data;
       })
       .catch((err) => err);
-  }
-})();
+  },
+};

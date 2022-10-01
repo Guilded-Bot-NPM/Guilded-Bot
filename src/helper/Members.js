@@ -1,5 +1,8 @@
 const { endpoints } = require('./EndPoints')
 const axios = require('axios')
+const { User } = require('../classes/Structures/User/User')
+const { Member } = require('../classes/Structures/User/Member')
+
 module.exports = new (class {
   /**
    * Get a user from the API
@@ -9,7 +12,6 @@ module.exports = new (class {
    * @returns {User} The user object
    */
   async getUser (userId, serverId, token) {
-    const { User } = require('../classes/user/User')
     const userData = await axios.get(
       `${endpoints.SERVER_MEMBERS(serverId, userId)}`,
       {
@@ -41,7 +43,6 @@ module.exports = new (class {
    * @returns {Member} The member object
    */
   async getMember (userId, serverId, token) {
-    const { Member } = require('../classes/user/Member')
     const memberData = await axios.get(
       `${endpoints.SERVER_MEMBERS(serverId, userId)}`,
       {

@@ -1,4 +1,4 @@
-const baseUrl = "https://www.guilded.gg/api/v1";
+const baseUrl = 'https://www.guilded.gg/api/v1'
 
 module.exports.endpoints = {
   /**
@@ -12,7 +12,7 @@ module.exports.endpoints = {
   /**
    * Get the url for edit or delete channel message
    */
-   MESSSAGE: (channelId, messageId) =>
+  MESSSAGE: (channelId, messageId) =>
     `${baseUrl}/channels/${channelId}/messages/${messageId}`,
   /**
   /**
@@ -24,5 +24,5 @@ module.exports.endpoints = {
    * Get the url for the server members
    */
   SERVER_MEMBERS: (serverId, memberId) =>
-    `${baseUrl}/servers/${serverId}/members/${memberId}`,
-};
+    `${baseUrl}/servers/${serverId}/members/${memberId}`
+}

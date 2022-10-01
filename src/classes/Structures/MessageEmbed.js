@@ -9,11 +9,11 @@ class MessageEmbed {
    * @example
    * embed.setTitle('This is a title');
    */
-  setTitle(title) {
-    if (typeof title !== "string") return this;
-    if (title.length > 256) return this;
-    this.title = title;
-    return this;
+  setTitle (title) {
+    if (typeof title !== 'string') return this
+    if (title.length > 256) return this
+    this.title = title
+    return this
   }
 
   /**
@@ -23,11 +23,11 @@ class MessageEmbed {
    * @example
    * embed.setDescription('This is a description');
    */
-  setDescription(description) {
-    if (typeof description !== "string") return this;
-    if (description.length > 2048) return this;
-    this.description = description;
-    return this;
+  setDescription (description) {
+    if (typeof description !== 'string') return this
+    if (description.length > 2048) return this
+    this.description = description
+    return this
   }
 
   /**
@@ -37,13 +37,13 @@ class MessageEmbed {
    * @example
    * embed.setURL('https://guilded.gg');
    */
-  setURL(url) {
-    if (typeof url !== "string") return this;
-    //Create a regex to check if the url is valid, valid url: https://www.google.com, http://www.google.com, https://google.com?test=1, http://google.com?test=1&test2=2
-    let regex = /(https?:\/\/[^\s]+)/gi;
-    if (!regex.test(url)) return this;
-    this.url = url;
-    return this;
+  setURL (url) {
+    if (typeof url !== 'string') return this
+    // Create a regex to check if the url is valid, valid url: https://www.google.com, http://www.google.com, https://google.com?test=1, http://google.com?test=1&test2=2
+    const regex = /(https?:\/\/[^\s]+)/gi
+    if (!regex.test(url)) return this
+    this.url = url
+    return this
   }
 
   /**
@@ -57,7 +57,7 @@ class MessageEmbed {
    * embed.setColor('RANDOM');
    * embed.setColor('RED');
    */
-  setColor(color = null) {
+  setColor (color = null) {
     const colors = {
       red: 16711680,
       green: 65280,
@@ -96,26 +96,22 @@ class MessageEmbed {
       darkblue: 255,
       darkyellow: 16776960,
       darkpurple: 8388736,
-      chucknorris: 15787699,
-    };
-
-    switch (typeof color) {
-      case "string":
-        if (color.startsWith("#")) color = parseInt(color.replace("#", ""), 16);
-        else if (color.startsWith("0x"))
-          color = parseInt(color.replace("0x", ""), 16);
-        else if (colors[color]) color = colors[color];
-        else if (color.toLowerCase() === "random")
-          color = Math.floor(Math.random() * 16777215);
-        else return this;
-        break;
-
-      case "number":
-        if (color < 0 || color > 16777215) return this;
-        break;
+      chucknorris: 15787699
     }
 
-    return this;
+    switch (typeof color) {
+      case 'string':
+        if (color.startsWith('#')) color = parseInt(color.replace('#', ''), 16)
+        else if (color.startsWith('0x')) { color = parseInt(color.replace('0x', ''), 16) } else if (colors[color]) color = colors[color]
+        else if (color.toLowerCase() === 'random') { color = Math.floor(Math.random() * 16777215) } else return this
+        break
+
+      case 'number':
+        if (color < 0 || color > 16777215) return this
+        break
+    }
+
+    return this
   }
 
   /**
@@ -127,16 +123,16 @@ class MessageEmbed {
    * @example
    * embed.setFooter({text: 'This is a footer', icon: 'https://i.imgur.com/sINzKh7.png'});
    */
-  setFooter(footer = {}) {
-    if (typeof footer.text !== "string") return this;
-    if (footer.text.length > 2048) return this;
+  setFooter (footer = {}) {
+    if (typeof footer.text !== 'string') return this
+    if (footer.text.length > 2048) return this
 
     this.footer = {
       text: footer.text,
-      icon_url: footer.iconURL,
-    };
+      icon_url: footer.iconURL
+    }
 
-    return this;
+    return this
   }
 
   /**
@@ -147,10 +143,10 @@ class MessageEmbed {
    * embed.setTime(new Date());
    * embed.setTime(Date.now());
    */
-  setTimestamp(timestamp = new Date().toISOString()) {
-    if (timestamp instanceof Date) return this;
-    this.timestamp = timestamp.toISOString();
-    return this;
+  setTimestamp (timestamp = new Date().toISOString()) {
+    if (timestamp instanceof Date) return this
+    this.timestamp = timestamp.toISOString()
+    return this
   }
 
   /**
@@ -160,15 +156,15 @@ class MessageEmbed {
    * @example
    * embed.setThumbnail('https://i.imgur.com/sINzKh7.png');
    */
-  setThumbnail(thumbnail) {
-    if (typeof thumbnail !== "string") return this;
-    let regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi;
-    if (!regex.test(thumbnail)) return this;
-    if (thumbnail.length > 1024) return this;
+  setThumbnail (thumbnail) {
+    if (typeof thumbnail !== 'string') return this
+    const regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi
+    if (!regex.test(thumbnail)) return this
+    if (thumbnail.length > 1024) return this
     this.thumbnail = {
-      url: thumbnail,
-    };
-    return this;
+      url: thumbnail
+    }
+    return this
   }
 
   /**
@@ -178,16 +174,16 @@ class MessageEmbed {
    * @example
    * embed.setImage('https://i.imgur.com/sINzKh7.png');
    */
-  setImage(image) {
-    if (typeof image !== "string") return this;
+  setImage (image) {
+    if (typeof image !== 'string') return this
     // Create a regex to test for a valid url, example: https://i.imgur.com/sINzKh7.png, https://img.guildedcdn.com/UserAvatar/63d207d85e1a5225ec16377f72b8867e-Large.webp?w=450&h=450, https://google.com, http://google.com, etc. Supports ?size=1024, etc.
-    let regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi;
-    if (!regex.test(image)) return this;
-    if (image.length > 1024) return this;
+    const regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi
+    if (!regex.test(image)) return this
+    if (image.length > 1024) return this
     this.image = {
-      url: image,
-    };
-    return this;
+      url: image
+    }
+    return this
   }
 
   /**
@@ -200,18 +196,18 @@ class MessageEmbed {
    * @example
    * embed.setAuthor({name: 'Guilded', icon: 'https://i.imgur.com/sINzKh7.png', url: 'https://guilded.gg'});
    */
-  setAuthor(author = {}) {
-    if (!author.name) return this;
-    if (typeof author.name !== "string") return this;
-    if (author.name.length > 256) return this;
+  setAuthor (author = {}) {
+    if (!author.name) return this
+    if (typeof author.name !== 'string') return this
+    if (author.name.length > 256) return this
 
     this.author = {
       name: author.name,
       icon_url: author.iconURL,
-      url: author.url,
-    };
+      url: author.url
+    }
 
-    return this;
+    return this
   }
 
   /**
@@ -232,26 +228,26 @@ class MessageEmbed {
    *  }
    * ]);
    */
-  setFields(fields = []) {
-    if (!Array.isArray(fields)) return this;
-    if (fields.length > 25) return this;
-    let newFields = [];
+  setFields (fields = []) {
+    if (!Array.isArray(fields)) return this
+    if (fields.length > 25) return this
+    const newFields = []
     fields.forEach((field) => {
-      if (!field.name) return this;
-      if (typeof field.name !== "string") return this;
-      if (field.name.length > 256) return this;
-      if (!field.value) return this;
-      if (typeof field.value !== "string") return this;
-      if (field.value.length > 1024) return this;
-      if (field.inline && typeof field.inline !== "boolean") return this;
+      if (!field.name) return this
+      if (typeof field.name !== 'string') return this
+      if (field.name.length > 256) return this
+      if (!field.value) return this
+      if (typeof field.value !== 'string') return this
+      if (field.value.length > 1024) return this
+      if (field.inline && typeof field.inline !== 'boolean') return this
       newFields.push({
         name: field.name,
         value: field.value,
-        inline: field.inline ?? false,
-      });
-    });
-    this.fields = newFields;
-    return this;
+        inline: field.inline ?? false
+      })
+    })
+    this.fields = newFields
+    return this
   }
 
   /**
@@ -270,24 +266,24 @@ class MessageEmbed {
    *    inline: false
    * });
    */
-  addField(name, value, inline = false) {
-    if (typeof name !== "string") return this;
-    if (name.length > 256) return this;
-    if (typeof value !== "string") return this;
-    if (value.length > 1024) return this;
-    if (typeof inline !== "boolean") return this;
+  addField (name, value, inline = false) {
+    if (typeof name !== 'string') return this
+    if (name.length > 256) return this
+    if (typeof value !== 'string') return this
+    if (value.length > 1024) return this
+    if (typeof inline !== 'boolean') return this
 
-    if (!this.fields) this.fields = [];
-    if (this.fields.length > 25) return this;
+    if (!this.fields) this.fields = []
+    if (this.fields.length > 25) return this
 
     this.fields.push({
-      name: name,
-      value: value,
-      inline: inline,
-    });
+      name,
+      value,
+      inline
+    })
 
-    return this;
+    return this
   }
 }
 
-module.exports.MessageEmbed = MessageEmbed;
+module.exports.MessageEmbed = MessageEmbed

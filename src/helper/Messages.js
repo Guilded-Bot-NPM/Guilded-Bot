@@ -1,5 +1,5 @@
-const { endpoints } = require("./EndPoints");
-const axios = require("axios");
+const { endpoints } = require('./EndPoints')
+const axios = require('axios')
 
 module.exports = {
   /**
@@ -17,41 +17,41 @@ module.exports = {
    * @private
    * @ignore
    */
-  async sendMessage(Object) {
-    let message = Object.content;
-    let channelId = Object.channelId;
-    let authToken = Object.authToken;
-    let isPrivate = Object.isPrivate ? true : false;
-    let isSilent = Object.isSilent ? true : false;
-    let replyMessageIds = Object.replyMessageIds
+  async sendMessage (Object) {
+    const message = Object.content
+    const channelId = Object.channelId
+    const authToken = Object.authToken
+    const isPrivate = !!Object.isPrivate
+    const isSilent = !!Object.isSilent
+    const replyMessageIds = Object.replyMessageIds
       ? Object.replyMessageIds
-      : null;
-    let embeds = Object.embeds ? Object.embeds : null;
+      : null
+    const embeds = Object.embeds ? Object.embeds : null
 
-    let final_Json = {
+    const final_Json = {
       content: message,
-      isPrivate: isPrivate ? true : false,
-      isSilent: isSilent ? true : false,
-    };
+      isPrivate: !!isPrivate,
+      isSilent: !!isSilent
+    }
 
-    if (replyMessageIds) final_Json.replyMessageIds = replyMessageIds;
-    if (embeds) final_Json.embeds = embeds;
+    if (replyMessageIds) final_Json.replyMessageIds = replyMessageIds
+    if (embeds) final_Json.embeds = embeds
 
     return await axios
       .post(`${endpoints.CHANNELS_MESSAGES(channelId)}`, final_Json, {
         headers: {
           Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       })
       .then((res) => {
-        //Make a new message object
-        const messageData = res.data.message;
-        const Messages = require("../classes/Structures/Message");
-        const Message = new Messages.Message(authToken, messageData);
-        return Message;
+        // Make a new message object
+        const messageData = res.data.message
+        const Messages = require('../classes/Structures/Message')
+        const Message = new Messages.Message(authToken, messageData)
+        return Message
       })
-      .catch((err) => err);
+      .catch((err) => err)
   },
 
   /**
@@ -68,47 +68,47 @@ module.exports = {
    * @private
    * @ignore
    */
-  async editMessage(Object) {
-    let message = Object.content;
-    let channelId = Object.channelId;
-    let authToken = Object.authToken;
-    let isPrivate = Object.isPrivate ? true : false;
-    let isSilent = Object.isSilent ? true : false;
-    let replyMessageIds = Object.replyMessageIds
+  async editMessage (Object) {
+    const message = Object.content
+    const channelId = Object.channelId
+    const authToken = Object.authToken
+    const isPrivate = !!Object.isPrivate
+    const isSilent = !!Object.isSilent
+    const replyMessageIds = Object.replyMessageIds
       ? Object.replyMessageIds
-      : null;
-    let embeds = Object.embeds ? Object.embeds : null;
-    let messageId = Object.id;
+      : null
+    const embeds = Object.embeds ? Object.embeds : null
+    const messageId = Object.id
 
-    let final_Json = {
+    const final_Json = {
       content: message,
-      isPrivate: isPrivate ? true : false,
-      isSilent: isSilent ? true : false,
-    };
+      isPrivate: !!isPrivate,
+      isSilent: !!isSilent
+    }
 
     if (replyMessageIds) {
-      final_Json.replyMessageIds = replyMessageIds;
+      final_Json.replyMessageIds = replyMessageIds
     }
 
     if (embeds) {
-      final_Json.embeds = embeds;
+      final_Json.embeds = embeds
     }
 
     return await axios
       .put(`${endpoints.MESSSAGE(channelId, messageId)}`, final_Json, {
         headers: {
           Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       })
       .then((res) => {
-        //Make a new message object
-        const messageData = res.data.message;
-        const Messages = require("../classes/Structures/Message");
-        const Message = new Messages.Message(authToken, messageData);
-        return Message;
+        // Make a new message object
+        const messageData = res.data.message
+        const Messages = require('../classes/Structures/Message')
+        const Message = new Messages.Message(authToken, messageData)
+        return Message
       })
-      .catch((err) => err);
+      .catch((err) => err)
   },
 
   /**
@@ -122,32 +122,32 @@ module.exports = {
    * @private
    * @ignore
    */
-  async deleteMessage(Object) {
-    let channelId = Object.channelId;
-    let authToken = Object.authToken;
-    let messageId = Object.id;
+  async deleteMessage (Object) {
+    const channelId = Object.channelId
+    const authToken = Object.authToken
+    const messageId = Object.id
 
-    let timeout = Object.timeout || 0;
+    const timeout = Object.timeout || 0
 
-    //Wait for timeout
-    await new Promise((resolve) => setTimeout(resolve, timeout));
+    // Wait for timeout
+    await new Promise((resolve) => setTimeout(resolve, timeout))
 
     return await axios
       .delete(`${endpoints.MESSSAGE(channelId, messageId)}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       })
       .then((res) => {
-        //Make a new message object
+        // Make a new message object
         if (res.status === 204) {
-          return "Message deleted";
+          return 'Message deleted'
         }
 
-        return res.data;
+        return res.data
       })
-      .catch((err) => err);
+      .catch((err) => err)
   },
 
   /**
@@ -161,11 +161,11 @@ module.exports = {
    * @private
    * @ignore
    */
-  async reactMessage(Object) {
-    let channelId = Object.channelId;
-    let authToken = Object.authToken;
-    let messageId = Object.id;
-    let emojiId = Object.emojiId;
+  async reactMessage (Object) {
+    const channelId = Object.channelId
+    const authToken = Object.authToken
+    const messageId = Object.id
+    const emojiId = Object.emojiId
 
     return await axios
       .put(
@@ -174,23 +174,23 @@ module.exports = {
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
+            'Content-Type': 'application/json'
+          }
         }
       )
       .then((res) => {
         if (res.status === 204) {
-          return "Message reacted";
+          return 'Message reacted'
         }
 
-        const data = res.data;
+        const data = res.data
 
         if (data.code) {
-          return data.message;
+          return data.message
         }
 
-        return data;
+        return data
       })
-      .catch((err) => err);
-  },
-};
+      .catch((err) => err)
+  }
+}

@@ -104,7 +104,7 @@ class Message {
 
       this.content = this.content
         .replace(/\n/g, " \n ")
-        .replace(/\n  \n/g, "\n \n");
+        .replace(/\n {2}\n/g, "\n \n");
 
       //Delete all files of the content
       //Example of message: "Hello ![](https://s3-us-west-2.amazonaws.com/www.guilded.gg/ContentMedia/42237368ad7882d89108acccf777c2ac-Full.webp?w=100&h=100)"

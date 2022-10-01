@@ -1,4 +1,4 @@
-const baseUrl = "https://www.guilded.gg/api/v1";
+const baseUrl = 'https://www.guilded.gg/api/v1'
 
 module.exports.endpoints = {
   /**
@@ -28,5 +28,5 @@ module.exports.endpoints = {
    * Get the url for the server members
    */
   SERVER_MEMBERS: (serverId, memberId) =>
-    `${baseUrl}/servers/${serverId}/members/${memberId}`,
-};
+    `${baseUrl}/servers/${serverId}/members/${memberId}`
+}

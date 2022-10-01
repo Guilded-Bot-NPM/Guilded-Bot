@@ -1,8 +1,8 @@
-const guser = require("../../helper/Members.js");
+const guser = require('../../helper/Members.js')
 
 class User {
-  raw;
-  id;
+  raw
+  id
   /**
    * User constructor
    * @param {Object} userData The user data
@@ -17,37 +17,37 @@ class User {
    * @param {URL | undefined} userData.avatar The avatar of the user
    * @return {User<String, String | undefined, Object | undefined, String, String, URL | undefined, URL | undefined>} The user id, the bot id, the server, the user type, the username of the user, the date the user was created, the banner of the user, the avatar of the user
    */
-  constructor(userData) {
-    this.id = userData.id;
-    this.username = userData.name;
-    this.createdAt = userData.createdAt;
-    this.server = userData.server?.id ? { id: userData.server.id } : null;
+  constructor (userData) {
+    this.id = userData.id
+    this.username = userData.name
+    this.createdAt = userData.createdAt
+    this.server = userData.server?.id ? { id: userData.server.id } : null
 
     if (userData.botId) {
-      this.botId = userData.botId;
+      this.botId = userData.botId
     }
 
     if (userData.type) {
-      this.userType = userData.type;
+      this.userType = userData.type
     }
 
     if (userData.avatar) {
-      this.avatarURL = userData.avatar;
+      this.avatarURL = userData.avatar
     }
 
     if (userData.banner) {
-      this.bannerURL = userData.banner;
+      this.bannerURL = userData.banner
     }
 
-    //raw is all the data that is not used in the class, except for the token
+    // raw is all the data that is not used in the class, except for the token
     this.raw = {
       server: userData.server,
       id: userData.id,
       name: userData.name,
-      createdAt: userData.createdAt,
-    };
+      createdAt: userData.createdAt
+    }
 
-    //Create function to get user's profile picture
+    // Create function to get user's profile picture
     if (this.server) {
       /**
        * Function will return the user's profile picture
@@ -57,8 +57,8 @@ class User {
         return (
           (await guser.getUser(this.id, this.server.id, userData.token))
             .avatar ?? null
-        );
-      };
+        )
+      }
 
       /**
        * Function will return the user's banner
@@ -68,10 +68,10 @@ class User {
         return (
           (await guser.getUser(this.id, this.server.id, userData.token))
             .banner ?? null
-        );
-      };
+        )
+      }
     }
   }
 }
 
-module.exports.User = User;
+module.exports.User = User

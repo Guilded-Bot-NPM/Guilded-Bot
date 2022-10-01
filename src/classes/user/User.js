@@ -1,27 +1,34 @@
+const guser = require("../../helper/Members.js");
+
 class User {
-    raw;
-    /* User ID */
-    id;
-    /* User Type */
-    serverId;
+  raw;
+  id;
+  /**
+   * User constructor
+   * @param {Object} userData The user data
+   * @param {String} userData.id The user id
+   * @param {String | undefined} userData.botId The bot id
+   * @param {Object | undefined} userData.server The server
+   * @param {String} userData.server.id The server id
+   * @param {String | undefined} userData.type The user type
+   * @param {String} userData.name The username of the user
+   * @param {String} userData.createdAt The date the user was created
+   * @param {URL | undefined} userData.banner The banner of the user
+   * @param {URL | undefined} userData.avatar The avatar of the user
+   * @return {User<String, String | undefined, Object | undefined, String, String, URL | undefined, URL | undefined>} The user id, the bot id, the server, the user type, the username of the user, the date the user was created, the banner of the user, the avatar of the user
+   */
   constructor(userData) {
     this.id = userData.id;
+    this.username = userData.name;
+    this.createdAt = userData.createdAt;
+    this.server = userData.server?.id ? { id: userData.server.id } : null;
 
     if (userData.botId) {
       this.botId = userData.botId;
     }
 
-    if (userData.serverId) {
-      this.serverId = userData.serverId;
-    }
     if (userData.type) {
       this.userType = userData.type;
-    }
-    if (userData.name) {
-      this.username = userData.name;
-    }
-    if (userData.createdAt) {
-      this.createdAt = userData.createdAt;
     }
 
     if (userData.avatar) {
@@ -32,31 +39,36 @@ class User {
       this.bannerURL = userData.banner;
     }
 
-    if (userData.createdBy) {
-      this.createdBy = userData.createdBy;
-    }
+    //raw is all the data that is not used in the class, except for the token
+    this.raw = {
+      server: userData.server,
+      id: userData.id,
+      name: userData.name,
+      createdAt: userData.createdAt,
+    };
 
     //Create function to get user's profile picture
-    if (this.serverId) {
-      const guser = require("../../helper/Members.js");
-
-      /*
-       *   This function will return the user's profile picture
-       *   @return {string} - The user's profile picture
+    if (this.server) {
+      /**
+       * Function will return the user's profile picture
+       * @return {string | null} The user's profile picture
        */
       this.getAvatarURL = async () => {
-        return (await guser.getUser(this.id, this.serverId, userData.token))
-          .avatar;
+        return (
+          (await guser.getUser(this.id, this.server.id, userData.token))
+            .avatar ?? null
+        );
       };
 
-      /*
-       *   This function will return the user's banner
-       *   @return {string} - The user's banner
-       *  @return {null} - If the user doesn't have a banner
+      /**
+       * Function will return the user's banner
+       * @return {url | null} The user's banner
        */
       this.getBannerURL = async () => {
-        return (await guser.getUser(this.id, this.serverId, userData.token))
-          .banner;
+        return (
+          (await guser.getUser(this.id, this.server.id, userData.token))
+            .banner ?? null
+        );
       };
     }
   }

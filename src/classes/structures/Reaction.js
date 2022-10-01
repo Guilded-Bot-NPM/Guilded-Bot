@@ -1,5 +1,18 @@
 
 class Reaction {
+  /**
+   * Reaction Object
+   * @param {Object} data
+   * @param {String} data.serverId The ID of the server of the reaction
+   * @param {Object} data.reaction The reaction object
+   * @param {String} data.reaction.channelId The ID of the channel of the reaction
+   * @param {String} data.reaction.messageId The ID of the message of the reaction
+   * @param {String} data.reaction.createdBy The ID of the user who created the reaction
+   * @param {Object} data.reaction.emote The emote object
+   * @param {String} data.reaction.emote.id The ID of the emote
+   * @param {String} data.reaction.emote.name The name of the emote
+   * @param {String} data.reaction.emote.url The URL of the emote
+   */
   constructor(data) {  
     this.serverId = data.serverId;
     this.channelId = data.reaction.channelId

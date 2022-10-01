@@ -1,15 +1,5 @@
-const path = require('path');
+'use strict';
 
-const { Client } = require(path.join(__dirname, "classes", "client", "Client.js"));
-const { MessageEmbed } = require(path.join(__dirname, "classes", "structures", "Embeds.js"));
-
-const Version = () => {
-    const package = require('../package.json');
-    return package.version;
-}
-
-module.exports = {
-    Client,
-    Version,
-    MessageEmbed,
-}
+module.exports.Client = require('./classes/client/Client.js').Client;
+module.exports.MessageEmbed = require('./classes/structures/Embeds.js').MessageEmbed;
+module.exports.Version = require('../package.json').version;

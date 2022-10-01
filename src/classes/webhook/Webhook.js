@@ -1,56 +1,41 @@
 class Webhook {
-    constructor(webhookData) {
-        if (webhookData.webhook.id) {
-            this.id = webhookData.webhook.id;
-        } else {
-            this.id = null;
+  /**
+   * Weebhook constructor
+   * @param {Object} webhookData The webhook data
+   * @param {String} webhookData.id The webhook id
+   * @param {String} webhookData.name The webhook name
+   * @param {String} webhookData.channelId The channel id of the webhook
+   * @param {String} webhookData.serverId The server id of the webhook
+   * @param {String} webhookData.createdBy The user id of the user who created the webhook
+   * @param {String} webhookData.createdAt The date the webhook was created
+   * @param {String} webhookData.deletedAt The date the webhook was deleted
+   * @param {String} webhookData.token The webhook token
+   */
+  constructor(webhookData) {
+    this.id = webhookData.webhook.id;
+    this.name = webhookData.webhook.name;
+    this.channelId = webhookData.webhook.channelId;
+    this.channel = webhookData.webhook.channelId
+      ? {
+          id: webhookData.webhook.channelId,
         }
-        if (webhookData.webhook.name) {
-            this.name = webhookData.webhook.name;
-        } else {
-            this.name = null;
+      : null;
+    this.serverId = webhookData.webhook.serverId;
+    this.server = webhookData.webhook.serverId
+      ? {
+          id: webhookData.webhook.serverId,
         }
-        if (webhookData.webhook.channelId) {
-            this.channelId = webhookData.webhook.channelId;
-            this.channel = {
-                id: webhookData.webhook.channelId,
-            };
-        } else {
-            this.channelId = null;
-            this.channel = null;
+      : null;
+    this.createdAt = webhookData.webhook.createdAt;
+    this.author = webhookData.webhook.createdBy
+      ? {
+          id: webhookData.webhook.createdBy,
         }
-        if (webhookData.serverId) {
-            this.serverId = webhookData.webhook.serverId;
-            this.server = {
-                id: webhookData.webhook.serverId,
-            };
-        } else {
-            this.serverId = null;
-            this.server = null;
-        }
-        if (webhookData.webhook.createdAt) {
-            this.createdAt = webhookData.webhook.createdAt;
-        } else {
-            this.createdAt = null;
-        }
-        if (webhookData.webhook.createdBy) {
-            this.author = {
-                id: webhookData.webhook.createdBy,
-            };
-        } else {
-            this.author = null;
-        }
-        if (webhookData.webhook.deletedAt) {
-            this.deletedAt = webhookData.webhook.deletedAt;
-        } else {
-            this.deletedAt = null;
-        }
-        if (webhookData.webhook.token) {
-            this.token = webhookData.webhook.token;
-        } else {
-            this.token = null;
-        };
-    }
+      : null;
+
+    this.deletedAt = webhookData.webhook.deletedAt;
+    this.token = webhookData.webhook.token;
+  }
 }
 
 module.exports.Webhook = Webhook;

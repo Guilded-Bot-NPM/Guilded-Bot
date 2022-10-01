@@ -1,21 +1,16 @@
 class UserSummary {
+    /**
+     * UserSummary constructor
+     * @param {Object} userData The user data
+     * @param {String} userData.id The user id
+     * @param {String | undefined} userData.type The user type
+     * @param {String} userData.name The username of the user
+     * @return {UserSummary<String, String | undefined, String, Object>} The user id, the user type, the username of the user
+     */
     constructor(userData) {
-        if (userData.id) {
-            this.id = userData.id;
-        } else {
-            this.id = null;
-        }
-        if (userData.type) {
-            this.userType = userData.type;
-        } else {
-            this.userType = null;
-        }
-        if (userData.name) {
-            this.name = userData.name;
-        } else {
-            this.name = null;
-        }
-
+        this.id = userData.id;
+        this.name = userData.name;
+        this.userType = userData.type ?? null;
         this.raw = userData;
     }
 }

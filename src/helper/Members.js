@@ -1,4 +1,4 @@
-const { endpoints } = require("./endpoints");
+const { endpoints } = require("./EndPoints");
 const axios = require("axios");
 module.exports = new (class {
   async getUser(userId, serverId, token) {
@@ -13,12 +13,17 @@ module.exports = new (class {
       }
     ).then( (res) => res.data ).catch( (err) => err);
 
-
     if (userData.code) {
       return null;
     }
 
-    return new User(userData.member.user);
+    if (!userData.avatar) userData.avatar = "https://support.guilded.gg/hc/article_attachments/4421394253207/profile_4.png";
+
+    return new User({
+      server: { id: serverId },
+      ...userData.member.user,
+      token,
+    });
   }
 
   async getMember(userId, serverId, token) {

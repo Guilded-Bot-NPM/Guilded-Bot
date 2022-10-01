@@ -7,17 +7,34 @@ const { MemberBan } = require("../user/MemberBan");
 const { Webhook } = require("../webhook/Webhook");
 const { Reaction } = require("../structures/Reaction");
 
-let bot_id = "";
-
 class ClientWebSocket extends EventEmitter {
+  /**
+   * Create a new WebSocket connection
+   * @param {Client} client
+   * @returns {ClientWebSocket}
+   * @constructor
+   * @private
+   */
   constructor(client) {
     super();
 
     this.ws = null;
     this.client = client;
     this.connected = false;
+    this.botID = null;
   }
 
+  /**
+   * Connects the bot to the Guilded API
+   * @returns {Promise<void>}
+   * @example
+   * client.ws.connect();
+   * @example
+   * client.ws.connect().then(() => {
+   *   console.log('Bot is ready!');
+   * });
+   * @private
+   */
   connect() {
     const token = this.client.token;
 
@@ -28,7 +45,6 @@ class ClientWebSocket extends EventEmitter {
     });
 
     // Events
-
     this.ws.on("open", () => {
       this.connected = true;
     });
@@ -44,9 +60,8 @@ class ClientWebSocket extends EventEmitter {
             (new Date().getTime() - this.client.readyAt) / 1000
           );
         };
-        bot_id = JSON.parse(data).d.user.id;
-        bot_id = bot_id.toString();
         let bot_data = JSON.parse(data).d;
+        this.botID = toString(bot_data.user.id);
         bot_data.user = new User(bot_data.user);
         this.emit("open", bot_data);
       }
@@ -56,21 +71,21 @@ class ClientWebSocket extends EventEmitter {
       try {
         switch (eventType) {
           case "ChatMessageCreated":
-            if (eventData.message.createdBy === bot_id) break;
+            if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageCreated",
               new Message(token, eventData.message, this.client)
             );
             break;
           case "ChatMessageUpdated":
-            if (eventData.message.createdBy === bot_id) break;
+            if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageUpdated",
               new Message(token, eventData.message, this.client)
             );
             break;
           case "ChatMessageDeleted":
-            if (eventData.message.createdBy === bot_id) break;
+            if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageDeleted",
               new Message(token, eventData.message, this.client)

@@ -1,9 +1,24 @@
 const msgs = require("../../helper/Messages");
 const guser = require("../../helper/Members");
 const { User } = require("../user/User");
+const { Reaction } = require("./Reaction");
 
+/**
+ * Represents a message
+ */
 class Message {
+  /**
+   * Creates a new message object
+   * @param {String} token Your guilded bot's Auth Token
+   * @param {Object} messageData The message data
+   * @param {Object} client The client object
+   * @returns {Message}
+   * @example
+   * const { Message } = require('guilded.js');
+   * const message = new Message('token', messageData, client);
+   */
   constructor(token, messageData, client) {
+    this.client = client;
     this.id = messageData.id ?? null;
     this.content = messageData.content ?? "default";
     this.channel = messageData.channelId
@@ -20,6 +35,7 @@ class Message {
            * @param {Array} content.embeds The embeds to send
            * @param {Array} content.attachments The attachments to send
            * @returns {Promise} The message object
+           * @private
            */
           send: (content) => {
             switch (typeof content) {
@@ -103,10 +119,15 @@ class Message {
         this.mentions.users = new Map();
         for (let i = 0; i < messageData.mentions.users.length; i++) {
           let mention = messageData.mentions.users[i];
-          mention.serverId = this.serverId;
+          mention.server = {
+            id: messageData.serverId,
+          };
           const user = new User(mention);
           this.mentions.users.set(user.id, user);
         }
+        this.mentions.users.first = () => {
+          return this.mentions.users.values().next().value;
+        };
       }
 
       if (messageData.mentions.roles) {
@@ -120,7 +141,9 @@ class Message {
     this.hasReplies = messageData.replyMessageIds ? true : false;
     this.replyMessageIds = messageData.replyMessageIds ?? null;
     this.private = messageData.isPrivate ?? false;
-    this.createdAt = messageData.createdAt ?? null;
+    this.createdAt = messageData.createdAt
+      ? new Date(messageData.createdAt)
+      : null;
     this.author = messageData.createdBy
       ? new User({
           id: messageData.createdBy,
@@ -131,9 +154,13 @@ class Message {
     this.isWebhook = messageData.createdByWebhookId ? true : false;
     this.webhookId = messageData.createdByWebhookId ?? null;
     this.isEdited = messageData.updatedAt ? true : false;
-    this.editedAt = messageData.updatedAt ?? null;
+    this.editedAt = messageData.updatedAt
+      ? new Date(messageData.updatedAt)
+      : null;
     this.isDeleted = messageData.deletedAt ? true : false;
-    this.deletedAt = messageData.deletedAt ?? null;
+    this.deletedAt = messageData.deletedAt
+      ? new Date(messageData.deletedAt)
+      : null;
     this.raw = messageData;
 
     /**
@@ -145,7 +172,7 @@ class Message {
      * @param {Array} content.replyMessageIds The message ids to reply to
      * @param {Array} content.embeds The embeds to send
      * @param {Array} content.attachments The attachments to send
-     * @returns {Promise} The message object
+     * @returns {Message} The message object
      * @example
      * message.reply("Hello");
      */
@@ -183,7 +210,7 @@ class Message {
      * @param {Array} content.replyMessageIds The message ids to reply to
      * @param {Array} content.embeds The embeds to send
      * @param {Array} content.attachments The attachments to send
-     * @returns {Promise} The message object
+     * @returns {Message} The message object
      * @example
      * message.edit("Hello world!");
      */
@@ -217,7 +244,7 @@ class Message {
      * Delete the current message
      * @param {Object} options The options for the delete
      * @param {Number} options.timeout The timeout for the delete
-     * @returns
+     * @returns {Message} The message object
      * @example
      * message.delete();
      * message.delete({ timeout: 5000 });
@@ -236,12 +263,12 @@ class Message {
     /**
      * Add a reaction to the current message
      * @param {Number} emoji The emoji to react with
-     * @returns {Promise} The reaction object
+     * @returns {Reaction} The reaction object
      * @example
      * message.react(90001164);
      */
     this.react = (emoji) => {
-      if (typeof emoji !== "number") throw new Error("Emoji must be a number");
+      if (typeof emoji !== "number") emoji = 90001164;
 
       return msgs.reactMessage({
         id: this.id,
@@ -262,10 +289,9 @@ class Message {
 
     (this.getUser = async (userId) => {
       return userId
-        ? await guser.getUser(userId, this.serverId, token)
-        : await guser.getUser(messageData.createdBy, this.serverId, token);
+        ? await guser.getUser(userId, this.server.id, token)
+        : await guser.getUser(messageData.createdBy, this.server.id, token);
     }),
-    
       /**
        * Get the member object of the author of the message or the member you want to get
        * @param {string} userId optional - The user id of the member you want to get info from
@@ -277,8 +303,8 @@ class Message {
 
       (this.getMember = async (userId) => {
         return userId
-          ? await guser.getMember(userId, this.serverId, token)
-          : await guser.getMember(messageData.createdBy, this.serverId, token);
+          ? await guser.getMember(userId, this.server.id, token)
+          : await guser.getMember(messageData.createdBy, this.server.id, token);
       });
   }
 }

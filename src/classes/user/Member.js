@@ -1,56 +1,26 @@
-const { User } = require('./User');
+const { User } = require("./User");
 
 class Member {
-    constructor(memberData) {
-        if (memberData.userId) {
-            this.userId = memberData.userId;
-        }
-        if (memberData.serverId) {
-            this.serverId = memberData.serverId;
-        }
-        if (memberData.user) {
-                this.user = new User(memberData.user);
-        } else {
-            this.user = null;
-        }
-        if (memberData.roleIds) {
-            this.roles = memberData.roleIds;
-        } else {
-            this.roles = null;
-        }
-        if (memberData.nickname) {
-            this.nickname = memberData.nickname;
-        } else {
-            this.nickname = null;
-        }
-        if (memberData.joinedAt) {
-            this.joinedAt = (new Date(memberData.joinedAt)).getTime() / 1000;
-        } else {
-            this.joinedAt = null;
-        }
-        if (memberData.isKick) {
-            this.kicked = true;
-        } else if (memberData.isKick) {
-            this.kicked = false;
-        }
-        if (memberData.isBan) {
-            this.banned = true;
-        } else {
-            this.banned = false;
-        }
-        if (memberData.userInfo) {
-            this.updatedInfo = {
-                id: memberData.userInfo.id,
-                nickname: memberData.userInfo.nickname,
-            };
-        } else {
-            this.updatedInfo = null;
-        }
-
-        this.isOwner = memberData.isOwner;
-
-        this.raw = memberData;
-    }
+  /**
+   * Member constructor
+   * @param {Object} memberData The member data
+   * @param {User} memberData.user The user
+   * @param {Array<number>} memberData.roleIds The role ids
+   * @param {String | undefined} memberData.nickname The nickname of the user
+   * @param {Date} memberData.joinedAt The date the user joined the server
+   * @param {boolean | undefined} memberData.isOwner Whether the user is the owner of the server
+   * @returns {Member<User, Array<number>, String | undefined, Date, boolean>} The user, the role ids, the nickname of the user, the date the user joined the server, whether the user is the owner of the server
+   */
+  constructor(memberData) {
+    this.userId = memberData.userId;
+    this.serverId = memberData.serverId ?? null;
+    this.user = new User(memberData.user);
+    this.roles = memberData.roleIds ?? [];
+    this.nickname = memberData.nickname ?? null;
+    this.joinedAt = new Date(memberData.joinedAt);
+    this.isOwner = memberData.isOwner ?? false;
+    this.raw = memberData;
+  }
 }
 
 module.exports.Member = Member;

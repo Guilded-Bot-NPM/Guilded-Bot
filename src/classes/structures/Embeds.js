@@ -1,13 +1,17 @@
+/**
+ * This class is used to create embeds for guilded messages
+ */
 class MessageEmbed {
   /**
    * Set the title of the embed
-   * @param {string} title
-   * @returns {MessageEmbed}
+   * @param {string} title - The title of the embed
+   * @returns {MessageEmbed} - The embed
+   * @example
+   * embed.setTitle('This is a title');
    */
   setTitle(title) {
-    if (typeof title !== "string") throw new Error("Title must be a string");
-    if (title.length > 256)
-      throw new Error("Title must be less than 256 characters");
+    if (typeof title !== "string") return this;
+    if (title.length > 256) return this;
     this.title = title;
     return this;
   }
@@ -16,12 +20,12 @@ class MessageEmbed {
    * Set the description of the embed
    * @param {string} description
    * @returns {MessageEmbed}
+   * @example
+   * embed.setDescription('This is a description');
    */
   setDescription(description) {
-    if (typeof description !== "string")
-      throw new Error("Description must be a string");
-    if (description.length > 2048)
-      throw new Error("Description must be less than 2048 characters");
+    if (typeof description !== "string") return this;
+    if (description.length > 2048) return this;
     this.description = description;
     return this;
   }
@@ -30,11 +34,14 @@ class MessageEmbed {
    * Set a URL for the embed
    * @param {String} url
    * @returns {MessageEmbed}
+   * @example
+   * embed.setURL('https://guilded.gg');
    */
   setURL(url) {
-    if (typeof url !== "string") throw new Error("URL must be a string");
-    let regex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-    if (!regex.test(url)) throw new Error("URL must be a valid http/https url");
+    if (typeof url !== "string") return this;
+    //Create a regex to check if the url is valid, valid url: https://www.google.com, http://www.google.com, https://google.com?test=1, http://google.com?test=1&test2=2
+    let regex = /(https?:\/\/[^\s]+)/gi;
+    if (!regex.test(url)) return this;
     this.url = url;
     return this;
   }
@@ -100,27 +107,27 @@ class MessageEmbed {
         else if (colors[color]) color = colors[color];
         else if (color.toLowerCase() === "random")
           color = Math.floor(Math.random() * 16777215);
-        else
-          throw new Error("Color must be a hex string or a valid color name");
+        else return this;
         break;
 
       case "number":
-        if (color < 0 || color > 16777215)
-          throw new Error("Color must be between 0 and 16777215");
+        if (color < 0 || color > 16777215) return this;
         break;
-
-      default:
-        throw new Error("Color must be a hex string or a valid color name");
     }
 
     return this;
   }
 
+  /**
+   * Set the footer for the embed
+   * @param {Object} footer
+   * @returns {MessageEmbed}
+   * @example
+   * embed.setFooter({text: 'This is a footer', icon: 'https://i.imgur.com/sINzKh7.png'});
+   */
   setFooter(footer = {}) {
-    if (typeof footer.text !== "string")
-      throw new Error("Footer text must be a string");
-    if (footer.text.length > 2048)
-      throw new Error("Footer text must be less than 2048 characters");
+    if (typeof footer.text !== "string") return this;
+    if (footer.text.length > 2048) return this;
 
     this.footer = {
       text: footer.text,
@@ -133,10 +140,13 @@ class MessageEmbed {
   /**
    * Set the time for the embed
    * @param {Date} time
-   * @returns
+   * @returns {MessageEmbed}
+   * @example
+   * embed.setTime(new Date());
+   * embed.setTime(Date.now());
    */
   setTimestamp(timestamp = new Date().toISOString()) {
-    if (timestamp instanceof Date) throw new Error("Timestamp must be a date");
+    if (timestamp instanceof Date) return this;
     this.timestamp = timestamp.toISOString();
     return this;
   }
@@ -149,13 +159,10 @@ class MessageEmbed {
    * embed.setThumbnail('https://i.imgur.com/sINzKh7.png');
    */
   setThumbnail(thumbnail) {
-    if (typeof thumbnail !== "string")
-      throw new Error("Thumbnail must be a string");
-    let regex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-    if (!regex.test(thumbnail))
-      throw new Error("Thumbnail must be a valid http/https url");
-    if (thumbnail.length > 1024)
-      throw new Error("Thumbnail url must be less than 1024 characters");
+    if (typeof thumbnail !== "string") return this;
+    let regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi;
+    if (!regex.test(thumbnail)) return this;
+    if (thumbnail.length > 1024) return this;
     this.thumbnail = {
       url: thumbnail,
     };
@@ -170,12 +177,11 @@ class MessageEmbed {
    * embed.setImage('https://i.imgur.com/sINzKh7.png');
    */
   setImage(image) {
-    if (typeof image !== "string") throw new Error("Image must be a string");
-    let regex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-    if (!regex.test(image))
-      throw new Error("Thumbnail must be a valid http/https url");
-    if (image.length > 1024)
-      throw new Error("Image url must be less than 1024 characters");
+    if (typeof image !== "string") return this;
+    // Create a regex to test for a valid url, example: https://i.imgur.com/sINzKh7.png, https://img.guildedcdn.com/UserAvatar/63d207d85e1a5225ec16377f72b8867e-Large.webp?w=450&h=450, https://google.com, http://google.com, etc. Supports ?size=1024, etc.
+    let regex = /(https?:\/\/.*\.(?:png|jpg|gif|jpeg|webp))/gi;
+    if (!regex.test(image)) return this;
+    if (image.length > 1024) return this;
     this.image = {
       url: image,
     };
@@ -190,11 +196,9 @@ class MessageEmbed {
    * embed.setAuthor('Guilded', 'https://i.imgur.com/sINzKh7.png', 'https://guilded.gg');
    */
   setAuthor(author = {}) {
-    if (!author.name) throw new Error("Author name must be provided");
-    if (typeof author.name !== "string")
-      throw new Error("Author name must be a string");
-    if (author.name.length > 256)
-      throw new Error("Author name must be less than 256 characters");
+    if (!author.name) return this;
+    if (typeof author.name !== "string") return this;
+    if (author.name.length > 256) return this;
 
     this.author = {
       name: author.name,
@@ -224,44 +228,17 @@ class MessageEmbed {
    * ]);
    */
   setFields(fields = []) {
-    if (!Array.isArray(fields)) throw new Error("Fields must be an array");
-    if (fields.length > 25) throw new Error("Fields must be less than 25");
+    if (!Array.isArray(fields)) return this;
+    if (fields.length > 25) return this;
     let newFields = [];
     fields.forEach((field) => {
-      if (!field.name)
-        throw new Error(
-          `The field number ${fields.indexOf(field) + 1} must have a name`
-        );
-      if (typeof field.name !== "string")
-        throw new Error(
-          `The field number ${fields.indexOf(field) + 1} name must be a string`
-        );
-      if (field.name.length > 256)
-        throw new Error(
-          `The field number ${
-            fields.indexOf(field) + 1
-          } name must be less than 256 characters`
-        );
-      if (!field.value)
-        throw new Error(
-          `The field number ${fields.indexOf(field) + 1} must have a value`
-        );
-      if (typeof field.value !== "string")
-        throw new Error(
-          `The field number ${fields.indexOf(field) + 1} value must be a string`
-        );
-      if (field.value.length > 1024)
-        throw new Error(
-          `The field number ${
-            fields.indexOf(field) + 1
-          } value must be less than 1024 characters`
-        );
-      if (field.inline && typeof field.inline !== "boolean")
-        throw new Error(
-          `The field number ${
-            fields.indexOf(field) + 1
-          } inline must be a boolean`
-        );
+      if (!field.name) return this;
+      if (typeof field.name !== "string") return this;
+      if (field.name.length > 256) return this;
+      if (!field.value) return this;
+      if (typeof field.value !== "string") return this;
+      if (field.value.length > 1024) return this;
+      if (field.inline && typeof field.inline !== "boolean") return this;
       newFields.push({
         name: field.name,
         value: field.value,
@@ -289,15 +266,14 @@ class MessageEmbed {
    * });
    */
   addField(name, value, inline = false) {
-    if (typeof name !== "string")
-      throw new Error("Field name must be a string");
-    if (name.length > 256) throw new Error("Field name must be less than 256");
-    if (typeof value !== "string")
-      throw new Error("Field value must be a string");
-    if (value.length > 1024)
-      throw new Error("Field value must be less than 1024");
-    if (typeof inline !== "boolean")
-      throw new Error("Field inline must be a boolean");
+    if (typeof name !== "string") return this;
+    if (name.length > 256) return this;
+    if (typeof value !== "string") return this;
+    if (value.length > 1024) return this;
+    if (typeof inline !== "boolean") return this;
+
+    if (!this.fields) this.fields = [];
+    if (this.fields.length > 25) return this;
 
     this.fields.push({
       name: name,

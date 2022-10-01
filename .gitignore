@@ -2,3 +2,7 @@ src/test
 .storyteller
 .env
 node_modules
+
+jsdocs.json
+docs
+out

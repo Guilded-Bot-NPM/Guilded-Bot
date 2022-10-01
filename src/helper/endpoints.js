@@ -1,10 +1,32 @@
 const baseUrl = "https://www.guilded.gg/api/v1";
 
 module.exports.endpoints = {
-    BASE: baseUrl,
-    CHANNELS_MESSAGES: (channelId) => `${baseUrl}/channels/${channelId}/messages`,
-    EDIT_MESSSAGE: (channelId, messageId) => `${baseUrl}/channels/${channelId}/messages/${messageId}`,
-    DELETE_MESSAGE: (channelId, messageId) => `${baseUrl}/channels/${channelId}/messages/${messageId}`,
-    REACT_MESSAGE: (channelId, messageId, emoteId) => `${baseUrl}/channels/${channelId}/content/${messageId}/emotes/${emoteId}`,
-    SERVER_MEMBERS: (serverId, memberId) => `${baseUrl}/servers/${serverId}/members/${memberId}`,
-}
+  /**
+   * Get the base url of the api
+   */
+  BASE: baseUrl,
+  /**
+   * Get the url for the channel messages
+   */
+  CHANNELS_MESSAGES: (channelId) => `${baseUrl}/channels/${channelId}/messages`,
+  /**
+   * Get the url for edit channel message
+   */
+  EDIT_MESSSAGE: (channelId, messageId) =>
+    `${baseUrl}/channels/${channelId}/messages/${messageId}`,
+  /**
+   * Get the url for delete channel message
+   */
+  DELETE_MESSAGE: (channelId, messageId) =>
+    `${baseUrl}/channels/${channelId}/messages/${messageId}`,
+  /**
+   * Get the url for the reactions of a message
+   */
+  REACT_MESSAGE: (channelId, messageId, emoteId) =>
+    `${baseUrl}/channels/${channelId}/content/${messageId}/emotes/${emoteId}`,
+  /**
+   * Get the url for the server members
+   */
+  SERVER_MEMBERS: (serverId, memberId) =>
+    `${baseUrl}/servers/${serverId}/members/${memberId}`,
+};

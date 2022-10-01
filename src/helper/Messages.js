@@ -1,4 +1,4 @@
-const { endpoints } = require("./endpoints");
+const { endpoints } = require("./EndPoints");
 const axios = require("axios");
 
 module.exports = new (class {
@@ -13,6 +13,7 @@ module.exports = new (class {
    * @param {Boolean} content.isSilent If the message is silent
    * @param {Array} content.replyMessageIds The message ids to reply to
    * @param {Array} content.embeds The embeds to send
+   * @private
    * @returns {Promise} The message object
    */
   async sendMessage(Object) {
@@ -32,13 +33,8 @@ module.exports = new (class {
       isSilent: isSilent ? true : false,
     };
 
-    if (replyMessageIds) {
-      final_Json.replyMessageIds = replyMessageIds;
-    }
-
-    if (embeds) {
-      final_Json.embeds = embeds;
-    }
+    if (replyMessageIds) final_Json.replyMessageIds = replyMessageIds;
+    if (embeds) final_Json.embeds = embeds;
 
     return await axios
       .post(`${endpoints.CHANNELS_MESSAGES(channelId)}`, final_Json, {
@@ -57,6 +53,18 @@ module.exports = new (class {
       .catch((err) => err);
   }
 
+  /**
+   * Edit a message in a selected channel
+   * @param {Object} content The content of the message
+   * @param {String} content.content The content of the message
+   * @param {String} content.channelId The channel id of the message
+   * @param {String} content.authToken The auth token of the bot
+   * @param {Boolean} content.isPrivate If the message is private
+   * @param {Boolean} content.isSilent If the message is silent
+   * @param {Array} content.replyMessageIds The message ids to reply to
+   * @param {Array} content.embeds The embeds to send
+   * @private
+   */
   async editMessage(Object) {
     let message = Object.content;
     let channelId = Object.channelId;
@@ -100,6 +108,15 @@ module.exports = new (class {
       .catch((err) => err);
   }
 
+  /**
+   * Delete a message in a selected channel
+   * @param {Object} content The content of the message
+   * @param {String} content.channelId The channel id of the message
+   * @param {String} content.authToken The auth token of the bot
+   * @param {String} content.id The message id
+   * @param {Number} content.timeout The timeout of the message
+   * @private
+   */
   async deleteMessage(Object) {
     let channelId = Object.channelId;
     let authToken = Object.authToken;
@@ -128,6 +145,15 @@ module.exports = new (class {
       .catch((err) => err);
   }
 
+  /**
+   * Reacy to a message in a selected channel
+   * @param {Object} content The content of the message
+   * @param {String} content.channelId The channel id of the message
+   * @param {String} content.authToken The auth token of the bot
+   * @param {String} content.id The message id
+   * @param {String} content.emojiId The emoji id
+   * @private
+   */
   async reactMessage(Object) {
     let channelId = Object.channelId;
     let authToken = Object.authToken;

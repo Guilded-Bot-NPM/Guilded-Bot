@@ -3,7 +3,8 @@ const { ClientWebSocket } = require("./WebSocket");
 
 class Client extends EventEmitter {
   /**
-   * Creates a new bot instance
+   * Creates a new bot instance.
+   * See {@tutorial example-bot} for an example
    * @param {String} token Your guilded bot's Auth Token
    * @returns {Client}
    * @example

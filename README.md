@@ -25,8 +25,7 @@ client.on("ready", () => {
 
 ## Documentation
 
-Comming Soon
-
+You can find the documentation [here](https://guildedbot.js.org/).
 
 ## Badges
 

@@ -1,8 +1,6 @@
 const guser = require("../../helper/Members.js");
 
 class User {
-  raw;
-  id;
   /**
    * User constructor
    * @param {Object} userData The user data

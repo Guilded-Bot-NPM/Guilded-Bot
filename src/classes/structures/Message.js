@@ -20,7 +20,7 @@ class Message {
   constructor(token, messageData, client) {
     this.client = client;
     this.id = messageData.id ?? null;
-    this.content = messageData.content ?? "default";
+    this.content = messageData.content ?? null;
     this.channel = messageData.channelId
       ? {
           id: messageData.channelId,
@@ -151,13 +151,10 @@ class Message {
           token: token,
         })
       : null;
-    this.isWebhook = messageData.createdByWebhookId ? true : false;
     this.webhookId = messageData.createdByWebhookId ?? null;
-    this.isEdited = messageData.updatedAt ? true : false;
     this.editedAt = messageData.updatedAt
       ? new Date(messageData.updatedAt)
       : null;
-    this.isDeleted = messageData.deletedAt ? true : false;
     this.deletedAt = messageData.deletedAt
       ? new Date(messageData.deletedAt)
       : null;

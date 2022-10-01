@@ -288,9 +288,10 @@ class Message {
      */
 
     this.getUser = async (userId) => {
-      return userId
-        ? await guser.getUser(userId, this.server.id, token)
-        : await guser.getUser(messageData.createdBy, this.server.id, token);
+      const user = userId
+      ? await guser.getUser(userId, this.server.id, token)
+      : await guser.getUser(messageData.createdBy, this.server.id, token)
+      return user;
     },
       /**
        * Get the member object of the author of the message or the member you want to get
@@ -302,9 +303,10 @@ class Message {
        */
 
       this.getMember = async (userId) => {
-        return userId
-          ? await guser.getMember(userId, this.server.id, token)
-          : await guser.getMember(messageData.createdBy, this.server.id, token);
+        const member = userId
+        ? await guser.getMember(userId, this.server.id, token)
+        : await guser.getMember(messageData.createdBy, this.server.id, token)
+        return member;
       };
   }
 }

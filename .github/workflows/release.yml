@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      - run: npm i jsdoc -g
+      - run: npm i jsdoc
       - run: npm run docs-gh
 
   # New job, this job is called "release" and will run on the latest version of Ubuntu

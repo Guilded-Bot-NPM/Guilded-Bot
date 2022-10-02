@@ -2,8 +2,6 @@
 # Guilded Bot
 
 Guilded Bot is a package that allows you to easily create a bot for the [Guilded](https://www.guilded.gg) chat platform.
-
-
 ## Installation
 
 Use the package manager [npm](https://www.npmjs.com/) to install Guilded Bot.
@@ -14,7 +12,7 @@ npm install guilded-bot
 ## Usage/Examples
 
 ```javascript
-const Guilded = require("../index.js");
+const Guilded = require("guilded-bot");
 const client = new Guilded.Client("Your-Token-Here");
 
 client.on("ready", () => {
@@ -26,6 +24,12 @@ client.on("ready", () => {
 ## Documentation
 
 You can find the documentation [here](https://guildedbot.js.org/).
+
+## Support
+
+If you need help with Guilded Bot, you can join the [Guilded Bot Support Server](https://www.guilded.gg/guilded-bot-support).
+
+<iframe src="https://www.guilded.gg/canvas_index.html?route=%2Fcanvas%2Fembed%2Fteamcard%2F0jbJm0rj&size=large" width="553" height="262" frameborder="0" scrolling="no"></iframe>
 
 ## Badges
 

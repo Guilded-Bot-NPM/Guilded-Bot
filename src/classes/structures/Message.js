@@ -1,5 +1,5 @@
-const msgs = require("../../helper/Messages");
-const guser = require("../../helper/Members");
+const msgs = require("../../Helper/Messages");
+const guser = require("../../Helper/Members");
 const { User } = require("./User/User");
 const { Reaction } = require("./Reaction");
 

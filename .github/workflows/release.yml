@@ -17,12 +17,18 @@ jobs:
     name: Generate documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm i jsdoc
-      - run: npm run docs-gh
-      # Compresse the documentation folder with name "docs.zip"
-      - run: zip -r docs.zip docs
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install JSDoc
+        run: npm i jsdoc -g
+      - name: Generate documentation
+        run: npm run docs-gh
+      - name: ZIP documentation
+        run: zip -r docs.zip docs
 
   # New job, this job is called "release" and will run on the latest version of Ubuntu
   # This job will run the "actions/checkout@v2" action to check out the code
@@ -36,10 +42,16 @@ jobs:
     needs: docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npm run test
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test
 
   # New job, this job is called "publish" and will run on the latest version of Ubuntu
   # This job need the "release" and "docs" jobs to be successful
@@ -53,16 +65,17 @@ jobs:
     needs: [release, docs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: ZIP Package
+        run: zip -r package.zip . -x .git\* .github\* node_modules\* package-lock.json docs\* tutorials\* package.zip docs.zip
       - name: Create Release
         id: create_release
-        uses: elgohr/Github-Release-Action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        uses: marvinpinto/actions@v1.2.1
         with:
-          title: ${{ github.ref }}
-      - name: Upload Docs to Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: docs.zip
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          draft: false
+          prerelease: false
+          title: ${{ github.event.pull_request.head.ref }}
+          files: |
+            docs.zip
+            package.zip
+          automatic_release_tag: ${{ github.event.pull_request.head.ref }}

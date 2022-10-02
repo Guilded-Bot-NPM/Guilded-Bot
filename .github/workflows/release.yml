@@ -1,0 +1,17 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+name: Release
+jobs:
+  release:
+    name: Release GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check if docs works"
+      - run: npm i -g jdoc
+      - run: npm run docs
+      
+      - name: "Release"
+      - uses: technote-space/release-github-actions@v6

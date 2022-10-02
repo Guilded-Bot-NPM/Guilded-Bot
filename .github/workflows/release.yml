@@ -11,6 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: npm i -g jdoc
+      - run: npm i jdoc
       - run: npm run docs
       - uses: technote-space/release-github-actions@v6

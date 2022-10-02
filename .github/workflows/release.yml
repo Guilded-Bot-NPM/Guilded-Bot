@@ -2,47 +2,73 @@ on:
   push:
     branches:
       - master
-
+    tags:
+      - v*
+      
 name: Release
 jobs:
-  postrelease:
-    name: Post Release
+  # New job, this job is called "docs" and will run on the latest version of Ubuntu
+  # This job will run the "actions/checkout@v2" action to check out the code
+  # This job will run the "actions/setup-node@v1" action to setup Node.js
+  # This job will run the "npm i jsdoc -g" command to install JSDoc globally
+  # This job will run the "npm run docs" command to generate the documentation
+  # If the job is successful, go to the next job
+  docs:
+    name: Generate documentation
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm i jsdoc
-      - run: npm run docs
-      - uses: technote-space/release-github-actions@v6
-
-  release:
-    name: Release GitHub Actions
-    needs: [postrelease]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-      - uses: technote-space/load-config-action@v1
+      - uses: actions/setup-node@v1
+      - run: npm i jsdoc -g
+      - run: npm run docs
 
-      - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@gh-actions
-
-  publishRelease:
-    name: Create Release
-    needs: [release, postrelease]
+  # New job, this job is called "release" and will run on the latest version of Ubuntu
+  # This job will run the "actions/checkout@v2" action to check out the code
+  # This job will run the "actions/setup-node@v1" action to setup Node.js
+  # This job will run the "npm ci" command to install the dependencies
+  # This job will run the "npm run test" command to run the tests
+  # If the job is successful, go to the next job
+  # This job need the "docs" job to be successful
+  release:
+    name: Release
+    needs: docs
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
-      - name: Get version
-        run: echo "TAG_NAME=${HEAD_REF#refs/tags/}" >> $GITHUB_ENV
-        env:
-          HEAD_REF: ${{ github.ref }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm ci
+      - run: npm run test
+
+  # New job, this job is called "publish" and will run on the latest version of Ubuntu
+  # This job need the "release" and "docs" jobs to be successful
+  # This job will run the "actions/checkout@v2" action to check out the code
+  # This job will launch a new release with the tag name
+  # This job will upload the all code in the repository to the release as an archive
+  # This job will upload the documentation to the release (the documentation is in the "docs" folder)
+
+  publish:
+    name: Publish
+    needs: [release, docs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Create Release
-        id: drafter
-        uses: technote-space/release-drafter@v6
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          DRAFT: false
-          NAME: ${{ env.TAG_NAME }}
-          TAG: ${{ env.TAG_NAME }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./docs
+          asset_name: docs
+          asset_content_type: application/zip

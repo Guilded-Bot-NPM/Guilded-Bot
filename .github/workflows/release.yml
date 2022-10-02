@@ -65,7 +65,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: docs
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

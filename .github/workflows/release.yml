@@ -52,6 +52,9 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm run test
+      - name: ZIP documentation
+        run: zip -r package.zip . -x .git\* .github\* node_modules\* package-lock.json docs\* tutorials\* package.zip docs.zip
+
 
   # New job, this job is called "publish" and will run on the latest version of Ubuntu
   # This job need the "release" and "docs" jobs to be successful
@@ -62,15 +65,13 @@ jobs:
 
   publish:
     name: Publish
-    needs: [release, docs]
+    needs: docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Node.js 
         uses: actions/setup-node@v3
-      - name: ZIP Package
-        run: zip -r package.zip . -x .git\* .github\* node_modules\* package-lock.json docs\* tutorials\* package.zip docs.zip
       - name: Create Release
         id: create_release
         uses: marvinpinto/actions@v1.2.1

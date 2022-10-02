@@ -54,8 +54,6 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm run test
-      - name: ZIP documentation
-        run: zip -r package.zip . -x .git\* .github\* node_modules\* package-lock.json docs\* tutorials\* package.zip docs.zip
 
 
   # New job, this job is called "publish" and will run on the latest version of Ubuntu
@@ -76,6 +74,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: ZIP Code
+        run: zip -r code.zip .
+      - name: Download JSDoc
+        run: npm i jsdoc -g
+      - name: Generate documentation
+        run: npm run docs-gh
+      - name: ZIP documentation
+        run: zip -r docs.zip docs
       - name: Create a variable for node-version
         # Now, need get the version of the package.json"
         run: echo "NODE_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
@@ -89,5 +95,5 @@ jobs:
           prerelease: false
           title: Release ${{ env.NODE_VERSION }}
           files: |
+            code.zip
             docs.zip
-            package.zip

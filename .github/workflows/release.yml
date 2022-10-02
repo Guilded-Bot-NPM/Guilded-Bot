@@ -3,7 +3,9 @@ on:
     branches:
       - master
     tags:
-      - v*
+    # Push events to matching like v1.0.0, v20.15.10, etc.
+    # If the tag is like "version 1.0.0" or "var 1.0.0" then it will not be matched
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 name: Release
 jobs:
@@ -75,19 +77,17 @@ jobs:
         with:
           node-version: 16
       - name: Create a variable for node-version
-        # Now, need get the version github.head_ref
-        # github.head_ref is the branch name like (/refs/heads/v1.0.0)
-        # So, need remove the "/refs/heads/" from github.head_ref"
-        run: GUILDED_BOT_VERSION=$(echo $GITHUB_REF | sed 's/refs\/heads\///g')
+        # Now, need get the version of the package.json"
+        run: echo "NODE_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          automatic_release_tag: v${{ $GUILDED_BOT_VERSION }}
+          automatic_release_tag: v${{ env.NODE_VERSION }}
           draft: false
           prerelease: false
-          title: ${{ $GUILDED_BOT_VERSION }}
+          title: Release ${{ env.NODE_VERSION }}
           files: |
             docs.zip
             package.zip

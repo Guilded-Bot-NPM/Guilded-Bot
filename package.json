@@ -7,6 +7,7 @@
     "dev": "nodemon --trace-warnings src/test/index.js",
     "start": "node src/index.js",
     "docs": "jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose",
+    "docs-gh": "jsdoc --readme ./README.md -c ./jsdocs-gh.json ./src/index.js --verbose --destination ./docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

@@ -30,7 +30,7 @@ jobs:
 
   publishRelease:
     name: Create Release
-    needs: [release, post_release]
+    needs: [release, postrelease]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

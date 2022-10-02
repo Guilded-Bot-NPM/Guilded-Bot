@@ -5,12 +5,46 @@ on:
 
 name: Release
 jobs:
-  release:
-    name: Release GitHub Actions
+  post_release:
+    name: Post Release
     runs-on: ubuntu-latest
     steps:
+      - name: 'Check if jsdoc can generate documentation'
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: npm i jdoc
+      - run: npm i jsdoc
       - run: npm run docs
       - uses: technote-space/release-github-actions@v6
+
+  release:
+    name: Release GitHub Actions
+    needs: cover
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: technote-space/load-config-action@v1
+
+      - name: Release GitHub Actions
+        uses: technote-space/release-github-actions@gh-actions
+
+  publishRelease:
+    name: Create Release
+    needs: [release, post_release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get version
+        run: echo "TAG_NAME=${HEAD_REF#refs/tags/}" >> $GITHUB_ENV
+        env:
+          HEAD_REF: ${{ github.ref }}
+      - name: Create Release
+        id: drafter
+        uses: technote-space/release-drafter@v6
+        with:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          DRAFT: false
+          NAME: ${{ env.TAG_NAME }}
+          TAG: ${{ env.TAG_NAME }}

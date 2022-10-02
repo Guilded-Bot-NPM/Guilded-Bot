@@ -76,7 +76,7 @@ jobs:
         id: create_release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
+          repo_token: ${{ secrets.ACCESS_TOKEN }}
           draft: false
           prerelease: false
           title: ${{ github.event.pull_request.head.ref }}

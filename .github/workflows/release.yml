@@ -78,16 +78,16 @@ jobs:
         # Now, need get the version github.head_ref
         # github.head_ref is the branch name like (/refs/heads/v1.0.0)
         # So, need remove the "/refs/heads/" from github.head_ref"
-        run: GUILDED_BOT_VERSION=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
+        run: GUILDED_BOT_VERSION=$(echo $GITHUB_REF | sed 's/refs\/heads\///g')
       - name: Create Release
         id: create_release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          automatic_release_tag: v${{ env.GUILDED_BOT_VERSION }}
+          automatic_release_tag: v${{ $GUILDED_BOT_VERSION }}
           draft: false
           prerelease: false
-          title: ${{ env.GUILDED_BOT_VERSION }}
+          title: ${{ $GUILDED_BOT_VERSION }}
           files: |
             docs.zip
             package.zip

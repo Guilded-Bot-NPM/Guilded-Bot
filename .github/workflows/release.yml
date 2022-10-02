@@ -4,7 +4,7 @@ on:
       - master
     tags:
       - v*
-      
+
 name: Release
 jobs:
   # New job, this job is called "docs" and will run on the latest version of Ubuntu
@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
       - run: npm i jsdoc -g
+      - run: npm i -d minami
       - run: npm run docs
 
   # New job, this job is called "release" and will run on the latest version of Ubuntu

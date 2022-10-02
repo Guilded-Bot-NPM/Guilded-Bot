@@ -84,7 +84,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          automatic_release_tag: v{{ env.GUILDED_BOT_VERSION }}
+          automatic_release_tag: v${{ env.GUILDED_BOT_VERSION }}
           draft: false
           prerelease: false
           title: ${{ env.GUILDED_BOT_VERSION }}

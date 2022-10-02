@@ -1,11 +1,11 @@
 const { EventEmitter } = require("events");
 const { WebSocket } = require("ws");
-const { Message } = require("../Structures/Message");
-const { User } = require("../Structures/User/User");
-const { Member } = require("../Structures/User/Member");
-const { MemberBan } = require("../Structures/User/MemberBan");
-const { Webhook } = require("../Structures/Webhook");
-const { Reaction } = require("../Structures/Reaction");
+const { Message } = require("../structures/message");
+const { User } = require("../structures/user/user");
+const { Member } = require("../structures/user/member");
+const { MemberBan } = require("../structures/user/memberban");
+const { Webhook } = require("../structures/webhook");
+const { Reaction } = require("../structures/reaction");
 
 /**
  * The ClientWebSocket class

@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const { ClientWebSocket } = require('./WebSocket')
+const { ClientWebSocket } = require('./websocket')
 
 /**
  * The main class for the Guilded.js library

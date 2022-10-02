@@ -1,4 +1,4 @@
-const { endpoints } = require("./Endpoints");
+const { endpoints } = require("./endpoints");
 const axios = require("axios");
 
 module.exports = {
@@ -47,7 +47,7 @@ module.exports = {
       .then((res) => {
         //Make a new message object
         const messageData = res.data.message;
-        const Messages = require("../Classes/Structures/Message");
+        const Messages = require("../classes/structures/message");
         const Message = new Messages.Message(authToken, messageData);
         return Message;
       })
@@ -104,7 +104,7 @@ module.exports = {
       .then((res) => {
         //Make a new message object
         const messageData = res.data.message;
-        const Messages = require("../Classes/Structures/Message");
+        const Messages = require("../classes/structures/message");
         const Message = new Messages.Message(authToken, messageData);
         return Message;
       })

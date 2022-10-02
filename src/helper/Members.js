@@ -1,7 +1,7 @@
-const { endpoints } = require('./Endpoints')
+const { endpoints } = require('./endpoints')
 const axios = require('axios')
-const { User } = require('../Classes/Structures/User/User')
-const { Member } = require('../Classes/Structures/User/Member')
+const { User } = require('../classes/structures/user/user')
+const { Member } = require('../classes/structures/user/member')
 
 module.exports = new (class {
   /**

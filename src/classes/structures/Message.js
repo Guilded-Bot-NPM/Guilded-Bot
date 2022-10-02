@@ -1,7 +1,7 @@
-const msgs = require("../../Helper/Messages");
-const guser = require("../../Helper/Members");
-const { User } = require("./User/User");
-const { Reaction } = require("./Reaction");
+const msgs = require("../../helper/messages");
+const guser = require("../../helper/members");
+const { User } = require("./user/user");
+const { Reaction } = require("./reaction");
 
 /**
  * Represents a message

@@ -4,9 +4,10 @@
   "description": "A library for interacting with the Guilded API for your Guilded Bot",
   "main": "src/index.js",
   "scripts": {
-    "test": "nodemon --trace-warnings src/test/index.js",
+    "dev": "nodemon --trace-warnings src/test/index.js",
     "start": "node src/index.js",
-    "docs": "jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose"
+    "docs": "jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "guilded",

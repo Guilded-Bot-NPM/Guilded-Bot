@@ -90,4 +90,3 @@ jobs:
           files: |
             docs.zip
             package.zip
-          automatic_release_tag: ${{ env.GUILDED_BOT_VERSION }}

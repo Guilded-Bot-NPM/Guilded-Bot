@@ -77,9 +77,8 @@ jobs:
       - name: Create a variable for node-version
         # Now, need get the version github.head_ref
         # github.head_ref is the branch name like (/refs/heads/v1.0.0)
-        # So, need remove the first 11 characters
-        # The output is the version (v1.0.0)
-        run: echo "VERSION=${{github.head_ref:11}}" >> $GITHUB_ENV 
+        # So, need remove the "/refs/heads/" from github.head_ref"
+        run: echo "GUILDED_BOT_VERSION=${{echo $GITHUB_REF | sed -e "s#refs/heads/##g"}}" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: marvinpinto/action-automatic-releases@v1.2.1
@@ -87,8 +86,8 @@ jobs:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
           draft: false
           prerelease: false
-          title: ${{ env.VERSION }}
+          title: ${{ env.GUILDED_BOT_VERSION }}
           files: |
             docs.zip
             package.zip
-          automatic_release_tag: ${{ env.VERSION }}
+          automatic_release_tag: ${{ env.GUILDED_BOT_VERSION }}

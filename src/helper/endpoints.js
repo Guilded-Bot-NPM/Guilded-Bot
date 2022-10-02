@@ -12,17 +12,14 @@ module.exports.endpoints = {
   /**
    * Get the url for edit or delete channel message
    */
-   MESSSAGE: (channelId, messageId) =>
-    `${baseUrl}/channels/${channelId}/messages/${messageId}`,
+   MESSSAGE: (channelId, messageId) => `${baseUrl}/channels/${channelId}/messages/${messageId}`,
   /**
   /**
    * Get the url for the reactions of a message
    */
-  REACT_MESSAGE: (channelId, messageId, emoteId) =>
-    `${baseUrl}/channels/${channelId}/content/${messageId}/emotes/${emoteId}`,
+  REACT_MESSAGE: (channelId, messageId, emoteId) => `${baseUrl}/channels/${channelId}/content/${messageId}/emotes/${emoteId}`,
   /**
    * Get the url for the server members
    */
-  SERVER_MEMBERS: (serverId, memberId) =>
-    `${baseUrl}/servers/${serverId}/members/${memberId}`,
+  SERVER_MEMBERS: (serverId, memberId) => `${baseUrl}/servers/${serverId}/members/${memberId}`,
 };

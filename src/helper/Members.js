@@ -10,6 +10,7 @@ module.exports = new (class {
    * @param {string} serverId
    * @param {string} token
    * @returns {User} The user object
+   * @ignore
    */
   async getUser (userId, serverId, token) {
     const userData = await axios.get(
@@ -41,6 +42,7 @@ module.exports = new (class {
    * @param {String} serverId
    * @param {String} token
    * @returns {Member} The member object
+   * @ignore
    */
   async getMember (userId, serverId, token) {
     const memberData = await axios.get(

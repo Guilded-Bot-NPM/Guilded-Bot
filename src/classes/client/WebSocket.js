@@ -7,6 +7,15 @@ const { MemberBan } = require("../Structures/User/MemberBan");
 const { Webhook } = require("../Structures/Webhook");
 const { Reaction } = require("../Structures/Reaction");
 
+/**
+ * The ClientWebSocket class
+ * @class ClientWebSocket
+ * @extends EventEmitter
+ * @param {Client} client
+ * @returns {ClientWebSocket}
+ * @constructor
+ * @private
+ */
 class ClientWebSocket extends EventEmitter {
   /**
    * Create a new WebSocket connection

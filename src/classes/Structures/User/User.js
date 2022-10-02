@@ -1,4 +1,4 @@
-const guser = require('../../../Helper/Members.js')
+const guser = require('../../../helper/members.js')
 
 class User {
   /**

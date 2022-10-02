@@ -3,7 +3,6 @@ src/test
 .env
 node_modules
 
-jsdocs.json
 docs
 out
 

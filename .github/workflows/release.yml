@@ -9,9 +9,8 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - name: "Check if docs works"
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
       - run: npm i -g jdoc
       - run: npm run docs
-      
-      - name: "Release"
       - uses: technote-space/release-github-actions@v6

@@ -290,4 +290,4 @@ class MessageEmbed {
   }
 }
 
-module.exports.MessageEmbed = MessageEmbed;
+module.exports = MessageEmbed;

@@ -38,4 +38,4 @@ class Webhook {
   }
 }
 
-module.exports.Webhook = Webhook;
+module.exports = Webhook;

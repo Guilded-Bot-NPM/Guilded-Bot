@@ -1,7 +1,7 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const { User: NewUser } = require("../classes/structures/user/user");
-const { Member } = require("../classes/structures/user/member");
+const NewUser = require("../classes/structures/user/user");
+const Member = require("../classes/structures/user/member");
 
 /**
  * Get the avatar URL of a user
@@ -15,6 +15,7 @@ exports.updateAvatarUser = async (User) => {
       headers: {
         Authorization: `Bearer ${User.client.token}`,
         "Content-Type": "application/json",
+        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => res.data)
@@ -31,8 +32,9 @@ exports.updateAvatarUser = async (User) => {
     }
   }
 
-  User.avatar = User.avatar ??
-      "https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_" +
+  User.avatar =
+    User.avatar ??
+    "https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_" +
       Math.floor(Math.random() * 4 + 1) +
       ".png";
 
@@ -51,6 +53,7 @@ exports.updateBannerUser = async (User) => {
       headers: {
         Authorization: `Bearer ${User.client.token}`,
         "Content-Type": "application/json",
+        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => res.data)
@@ -86,6 +89,7 @@ exports.getMember = async (user, client) => {
       headers: {
         Authorization: `Bearer ${client.token}`,
         "Content-Type": "application/json",
+        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => res.data)
@@ -111,6 +115,7 @@ exports.getUser = async (user, client) => {
       headers: {
         Authorization: `Bearer ${client.token}`,
         "Content-Type": "application/json",
+        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => res.data)

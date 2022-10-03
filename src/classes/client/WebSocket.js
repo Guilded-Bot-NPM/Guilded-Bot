@@ -1,11 +1,12 @@
 const { EventEmitter } = require("events");
 const { WebSocket } = require("ws");
-const { Message } = require("../structures/message");
-const { User } = require("../structures/user/user");
-const { Member } = require("../structures/user/member");
-const { MemberBan } = require("../structures/user/memberban");
-const { Webhook } = require("../structures/webhook");
-const { Reaction } = require("../structures/reaction");
+const Message = require("../structures/message");
+const User = require("../structures/user/user");
+const Member = require("../structures/user/member");
+const MemberBan = require("../structures/user/memberban");
+const Webhook = require("../structures/webhook");
+const Reaction = require("../structures/reaction");
+const { version } = require("../../../package.json");
 
 /**
  * The ClientWebSocket class
@@ -55,7 +56,7 @@ class ClientWebSocket extends EventEmitter {
      * @private
      */
     this.botID = null;
-    
+
     global.cache = new Map();
     global.cache.users = new Map();
     global.cache.members = new Map();
@@ -66,7 +67,6 @@ class ClientWebSocket extends EventEmitter {
      * @private
      */
     this.client.cache = global.cache;
-
   }
 
   /**
@@ -104,6 +104,15 @@ class ClientWebSocket extends EventEmitter {
             (new Date().getTime() - this.client.readyAt) / 1000
           );
         };
+        //The version of the library
+        this.client.version = version;
+        // The platform the bot is running on, convert like this: process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'MacOS' : 'Linux'
+        this.client.platform =
+          process.platform === "win32"
+            ? "Windows"
+            : process.platform === "darwin"
+            ? "MacOS"
+            : "Linux";
         let bot_data = JSON.parse(data).d;
         this.botID = toString(bot_data.user.id);
         bot_data.user = new User(bot_data.user, this.client);
@@ -180,4 +189,4 @@ class ClientWebSocket extends EventEmitter {
   }
 }
 
-module.exports.ClientWebSocket = ClientWebSocket;
+module.exports = ClientWebSocket;

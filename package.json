@@ -1,10 +1,10 @@
 {
   "name": "guilded-bot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A library for interacting with the Guilded API for your Guilded Bot",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon --trace-warnings test/index.test.js",
+    "dev": "nodemon test/bot/index.js",
     "start": "node src/index.js",
     "docs": "jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose",
     "docs-gh": "jsdoc --readme ./README.md -c ./jsdocs-gh.json ./src/index.js --verbose --destination ./docs",

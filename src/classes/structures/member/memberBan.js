@@ -1,4 +1,4 @@
-const UserSummary = require('./usersummary.js');
+const UserSummary = require('../user/userSummary.js');
 
 class MemberBan {
     /**

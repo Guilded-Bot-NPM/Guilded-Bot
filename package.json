@@ -1,6 +1,6 @@
 {
   "name": "guilded-bot",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A library for interacting with the Guilded API for your Guilded Bot",
   "main": "src/index.js",
   "scripts": {
@@ -16,6 +16,10 @@
     "api",
     "library"
   ],
+  "homepage": "https://guildedbot.js.org"
+  "bugs": {
+      "url" : "https://github.com/guilded-bot-npm/guilded-bot/issues"
+  },
   "contributors": [
     {
       "name": "MDCDEV",
@@ -26,8 +30,12 @@
       "name": "RellyLegend",
       "url": "https://github.com/RellyLegend/guilded-api.js"
     }
-  ],
-  "license": "ISC",
+   ],
+  "repository": { 
+    "type": "git", 
+    "url": "https://github.com/Guilded-Bot-NPM/Guilded-Bot.git" 
+  }, 
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.27.2",
     "docdash": "^1.2.0",

@@ -1,7 +1,7 @@
 const Guilded = require('../src/index.js');
 let client = new Guilded.Client("some token");
 
-let message = new Guilded.Message(client.token, {
+let message = new Guilded.Message({
     "id": "H6G4Q",
     "createdBy": "y7Fqn",
     "content": "Hey, this is a cool message!",

@@ -7,3 +7,5 @@ docs
 out
 
 coverage
+
+test/bot

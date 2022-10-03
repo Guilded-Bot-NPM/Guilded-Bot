@@ -14,14 +14,67 @@ class Reaction {
    * @param {String} data.reaction.emote.url The URL of the emote
    */
   constructor(data) {  
+    /**
+     * The ID of the server of the reaction
+     * @type {String}
+     * @readonly
+     */
     this.serverId = data.serverId;
+
+    /**
+     * The ID of the channel of the reaction
+     * @type {String}
+     * @readonly
+     */
     this.channelId = data.reaction.channelId
+
+    /**
+     * The ID of the message of the reaction
+     * @type {String}
+     * @readonly
+     */
     this.messageId = data.reaction.messageId;
+
+    /**
+     * The ID of the user who created the reaction
+     * @type {String}
+     * @readonly
+     */
     this.createdBy = data.reaction.createdBy;
+
+    /**
+     * The emote ID of the reaction
+     * @type {String}
+     * @readonly
+     */
     this.emoteId = data.reaction.emote.id;
+
+    /**
+     * The emote name of the reaction
+     * @type {String}
+     * @readonly
+     */
     this.emoteName = data.reaction.emote.name;
+
+    /**
+     * The partial url of the emote
+     * @type {String}
+     * @readonly
+     */
     this.emotePartialUrl = data.reaction.emote.url;
+
+    /**
+     * The full url of the emote
+     * @type {String}
+     * @readonly
+     */
     this.emoteUrl = "https://img.guildedcdn.com" + data.reaction.emote.url;
+
+    /**
+     * The raw data of the reaction
+     * @type {Object}
+     * @readonly
+     */
     this.raw = data.reaction;
   }
 }

@@ -20,7 +20,18 @@ class Client extends EventEmitter {
   constructor (token = String) {
     super()
 
+    /**
+     * The token of the bot
+     * @type {String}
+     * @readonly
+     */
     this.token = token
+
+    /**
+     * The websocket of the bot
+     * @type {ClientWebSocket}
+     * @readonly
+     */
     this.ws = null
   }
 

@@ -9,15 +9,14 @@ const { Reaction } = require("./reaction");
 class Message {
   /**
    * Creates a new message object
-   * @param {String} token Your guilded bot's Auth Token
    * @param {Object} messageData The message data
    * @param {Object} client The client object
    * @returns {Message}
    * @example
    * const { Message } = require('guilded.js');
-   * const message = new Message('token', messageData, client);
+   * const message = new Message(messageData, client);
    */
-  constructor(token, messageData, client) {
+  constructor(messageData, client) {
     /**
      * Client object
      * @type {Client}
@@ -70,26 +69,30 @@ class Message {
       send: (content) => {
         switch (typeof content) {
           case "string":
-            return msgs.sendMessage({
-              content,
-              channelId: messageData.channelId,
-              authToken: token,
-              isPrivate: false,
-              isSilent: false,
-            });
+            return msgs.sendMessage(
+              {
+                content,
+                channelId: messageData.channelId,
+                isPrivate: false,
+                isSilent: false,
+              },
+              client
+            );
           case "object":
-            return msgs.sendMessage({
-              content: content.content,
-              channelId: messageData.channelId,
-              authToken: token,
-              isPrivate: !!content.isPrivate,
-              isSilent: !!content.isSilent,
-              replyMessageIds: content.replyMessageIds
-                ? content.replyMessageIds
-                : null,
-              embeds: content.embeds ? content.embeds : null,
-              attachments: content.attachments ? content.attachments : null,
-            });
+            return msgs.sendMessage(
+              {
+                content: content.content,
+                channelId: messageData.channelId,
+                isPrivate: !!content.isPrivate,
+                isSilent: !!content.isSilent,
+                replyMessageIds: content.replyMessageIds
+                  ? content.replyMessageIds
+                  : null,
+                embeds: content.embeds ? content.embeds : null,
+                attachments: content.attachments ? content.attachments : null,
+              },
+              client
+            );
         }
       },
     };
@@ -99,11 +102,7 @@ class Message {
      * @type {Server | null}
      * @readonly
      */
-    this.server = messageData.serverId
-      ? {
-          id: messageData.serverId,
-        }
-      : null;
+    this.serverId = messageData.serverId ?? null;
 
     // Check if message have attachments
     if (this.content.includes("![")) {
@@ -193,11 +192,41 @@ class Message {
      * @type {User}
      * @readonly
      */
-    this.author = new User({
-      id: messageData.createdBy,
-      serverId: messageData.serverId,
-      token,
-    });
+    this.author = null;
+
+    if (global.cache.users.has(messageData.createdBy)) {
+      // Check properties and update them
+      const newAuthor = new User(
+        {
+          id: messageData.createdBy,
+          serverId: messageData.serverId,
+        },
+        client
+      );
+      const oldAuthor = global.cache.users.get(messageData.createdBy);
+      for (const property in newAuthor) {
+        if (
+          newAuthor[property] !== oldAuthor[property] &&
+          property !== null &&
+          property !== undefined &&
+          property !== NaN
+        ) {
+          oldAuthor[property] = newAuthor[property];
+        }
+      }
+      this.author = oldAuthor;
+      global.cache.users.set(messageData.createdBy, oldAuthor);
+    } else {
+      this.author = new User(
+        {
+          id: messageData.createdBy,
+          serverId: messageData.serverId,
+        },
+        client
+      );
+      global.cache.users.set(this.author.id, this.author);
+    }
+
     /**
      * The webhook id of the message
      * @type {String | null}
@@ -237,25 +266,29 @@ class Message {
     this.reply = (content) => {
       switch (typeof content) {
         case "string":
-          return msgs.sendMessage({
-            content,
-            channelId: messageData.channelId,
-            authToken: token,
-            isPrivate: false,
-            isSilent: false,
-            replyMessageIds: [this.id],
-          });
+          return msgs.sendMessage(
+            {
+              content,
+              channelId: messageData.channelId,
+              isPrivate: false,
+              isSilent: false,
+              replyMessageIds: [this.id],
+            },
+            client
+          );
         case "object":
-          return msgs.sendMessage({
-            content: content.content,
-            channelId: messageData.channelId,
-            authToken: token,
-            isPrivate: !!content.isPrivate,
-            isSilent: !!content.isSilent,
-            replyMessageIds: [this.id],
-            embeds: content.embeds ? content.embeds : null,
-            attachments: content.attachments ? content.attachments : null,
-          });
+          return msgs.sendMessage(
+            {
+              content: content.content,
+              channelId: messageData.channelId,
+              isPrivate: !!content.isPrivate,
+              isSilent: !!content.isSilent,
+              replyMessageIds: [this.id],
+              embeds: content.embeds ? content.embeds : null,
+              attachments: content.attachments ? content.attachments : null,
+            },
+            client
+          );
       }
     };
 
@@ -275,26 +308,30 @@ class Message {
     this.edit = (content) => {
       switch (typeof content) {
         case "string":
-          return msgs.editMessage({
-            id: this.id,
-            content,
-            channelId: messageData.channelId,
-            authToken: token,
-            isPrivate: false,
-            isSilent: false,
-          });
+          return msgs.editMessage(
+            {
+              id: this.id,
+              content,
+              channelId: messageData.channelId,
+              isPrivate: false,
+              isSilent: false,
+            },
+            client
+          );
         case "object":
-          return msgs.editMessage({
-            id: this.id,
-            content: content.content,
-            channelId: messageData.channelId,
-            authToken: token,
-            isPrivate: !!content.isPrivate,
-            isSilent: !!content.isSilent,
-            replyMessageIds: [this.id],
-            embeds: content.embeds ? content.embeds : null,
-            attachments: content.attachments ? content.attachments : null,
-          });
+          return msgs.editMessage(
+            {
+              id: this.id,
+              content: content.content,
+              channelId: messageData.channelId,
+              isPrivate: !!content.isPrivate,
+              isSilent: !!content.isSilent,
+              replyMessageIds: [this.id],
+              embeds: content.embeds ? content.embeds : null,
+              attachments: content.attachments ? content.attachments : null,
+            },
+            client
+          );
       }
     };
 
@@ -312,9 +349,9 @@ class Message {
         {
           id: this.id,
           channelId: messageData.channelId,
-          authToken: token,
+          timeout: object.timeout ? object.timeout : 0,
         },
-        object.timeout ?? 0
+        client
       );
     };
 
@@ -328,12 +365,14 @@ class Message {
     this.react = (emoji) => {
       if (typeof emoji !== "number") emoji = 90001164;
 
-      return msgs.reactMessage({
-        id: this.id,
-        channelId: messageData.channelId,
-        authToken: token,
-        emojiId: emoji ?? 90001164,
-      });
+      return msgs.reactMessage(
+        {
+          id: this.id,
+          channelId: messageData.channelId,
+          emojiId: emoji ?? 90001164,
+        },
+        client
+      );
     };
 
     /**
@@ -344,28 +383,46 @@ class Message {
      * message.getUser();
      * message.getUser("123456789");
      */
+    this.getUser = async (userId) => {
+      // Check if the user id is in cache
+      if (client.cache.users.get(userId ?? this.author.id)) {
+        return client.cache.users.get(userId ?? this.author.id);
+      } else {
+        // If not, get the user from the api
+        const newUser = await guser.getUser(
+          {
+            id: userId ?? this.author.id,
+            serverId: messageData.serverId,
+          },
+          client
+        );
 
-    (this.getUser = async (userId) => {
-      const user = userId
-        ? await guser.getUser(userId, this.server.id, token)
-        : await guser.getUser(messageData.createdBy, this.server.id, token);
-      return user;
-    }),
-      /**
-       * Get the member object of the author of the message or the member you want to get
-       * @param {string} userId optional - The user id of the member you want to get info from
-       * @returns {Member} - The member object
-       * @example
-       * message.getMember();
-       * message.getMember("123456789");
-       */
+        // Add the user to the cache
+        client.cache.users.set(userId, newUser);
 
-      (this.getMember = async (userId) => {
-        const member = userId
-          ? await guser.getMember(userId, this.server.id, token)
-          : await guser.getMember(messageData.createdBy, this.server.id, token);
-        return member;
-      });
+        return newUser;
+      }
+    };
+
+    /**
+     * Get the member object of the author of the message or the member you want to get
+     * @param {string} userId optional - The user id of the member you want to get info from
+     * @returns {Member} - The member object
+     * @example
+     * message.getMember();
+     * message.getMember("123456789");
+     */
+
+    this.getMember = async (userId) => {
+      const member = await guser.getMember(
+        {
+          id: userId ?? this.author.id,
+          serverId: messageData.serverId,
+        },
+        client
+      );
+      return member;
+    };
   }
 }
 

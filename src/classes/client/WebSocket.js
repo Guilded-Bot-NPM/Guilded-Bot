@@ -11,8 +11,8 @@ const { Reaction } = require("../structures/reaction");
  * The ClientWebSocket class
  * @class ClientWebSocket
  * @extends EventEmitter
- * @param {Client} client
- * @returns {ClientWebSocket}
+ * @param {Client} client The client object
+ * @returns {ClientWebSocket} The ClientWebSocket object
  * @constructor
  * @private
  */
@@ -27,10 +27,46 @@ class ClientWebSocket extends EventEmitter {
   constructor(client) {
     super();
 
+    /**
+     * The WebSocket connection
+     * @type {WebSocket}
+     * @private
+     */
     this.ws = null;
+
+    /**
+     * The client object
+     * @type {Client}
+     * @private
+     */
     this.client = client;
+
+    /**
+     * Whether the WebSocket is connected or not
+     * @type {boolean}
+     * @private
+     * @readonly
+     */
     this.connected = false;
+
+    /**
+     * The bot's ID
+     * @type {string}
+     * @private
+     */
     this.botID = null;
+    
+    global.cache = new Map();
+    global.cache.users = new Map();
+    global.cache.members = new Map();
+
+    /**
+     * The bot cache object
+     * @type {Map}
+     * @private
+     */
+    this.client.cache = global.cache;
+
   }
 
   /**
@@ -53,7 +89,6 @@ class ClientWebSocket extends EventEmitter {
       },
     });
 
-    // Events
     this.ws.on("open", () => {
       this.connected = true;
     });
@@ -71,7 +106,7 @@ class ClientWebSocket extends EventEmitter {
         };
         let bot_data = JSON.parse(data).d;
         this.botID = toString(bot_data.user.id);
-        bot_data.user = new User(bot_data.user);
+        bot_data.user = new User(bot_data.user, this.client);
         this.emit("open", bot_data);
       }
 
@@ -83,21 +118,21 @@ class ClientWebSocket extends EventEmitter {
             if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageCreated",
-              new Message(token, eventData.message, this.client)
+              new Message(eventData.message, this.client)
             );
             break;
           case "ChatMessageUpdated":
             if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageUpdated",
-              new Message(token, eventData.message, this.client)
+              new Message(eventData.message, this.client)
             );
             break;
           case "ChatMessageDeleted":
             if (eventData.message.createdBy === this.botID) break;
             this.emit(
               "messageDeleted",
-              new Message(token, eventData.message, this.client)
+              new Message(eventData.message, this.client)
             );
             break;
           case "TeamMemberJoined":

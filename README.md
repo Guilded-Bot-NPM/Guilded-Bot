@@ -18,6 +18,8 @@ const client = new Guilded.Client("Your-Token-Here");
 client.on("ready", () => {
   console.log("I am ready!");
 });
+
+client.login()
 ```
 
 

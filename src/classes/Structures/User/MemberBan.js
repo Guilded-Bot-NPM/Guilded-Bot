@@ -12,9 +12,33 @@ class MemberBan {
      * @returns {MemberBan<UserSummary, String | undefined, String, String>} The user who was banned, the reason for the ban, the date the user was banned, the user who banned the user
      */
     constructor(banData) {
+        /**
+         * The UserSummary of the user who was banned
+         * @type {UserSummary} 
+         * @readonly
+         * @private
+         */
         this.user = new UserSummary(banData.serverMemberBan.user);
-        this.bannedAt = banData.serverMemberBan.createdAt;
+
+        /**
+         * The date the user was banned
+         * @type {String}
+         * @readonly
+         * @private
+         */
+        this.bannedAt = new Date(banData.serverMemberBan.bannedAt);
+
+        /**
+         * The user id of the user who banned the user
+         * @type {String}
+         * @readonly
+         */
         this.bannedBy = banData.serverMemberBan.createdBy;
+
+        /**
+         * The reason for the ban
+         * @type {String | null}
+         */
         this.reason = banData.serverMemberBan.reason ?? null;
     }
 }

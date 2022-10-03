@@ -42,6 +42,16 @@ class ClientWebSocket extends EventEmitter {
      */
     this.client = client;
 
+    //The version of the library
+    this.client.version = version;
+    // The platform the bot is running on, convert like this: process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'MacOS' : 'Linux'
+    this.client.platform =
+      process.platform === "win32"
+        ? "Windows"
+        : process.platform === "darwin"
+        ? "MacOS"
+        : "Linux";
+
     /**
      * Whether the WebSocket is connected or not
      * @type {boolean}
@@ -86,6 +96,7 @@ class ClientWebSocket extends EventEmitter {
     this.ws = new WebSocket(`wss://api.guilded.gg/v1/websocket`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "User-Agent": `Guilded-Bot/${this.client.version} (${this.client.platform}) Node.js (${process.version})`
       },
     });
 
@@ -104,15 +115,6 @@ class ClientWebSocket extends EventEmitter {
             (new Date().getTime() - this.client.readyAt) / 1000
           );
         };
-        //The version of the library
-        this.client.version = version;
-        // The platform the bot is running on, convert like this: process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'MacOS' : 'Linux'
-        this.client.platform =
-          process.platform === "win32"
-            ? "Windows"
-            : process.platform === "darwin"
-            ? "MacOS"
-            : "Linux";
         let bot_data = JSON.parse(data).d;
         this.botID = toString(bot_data.user.id);
         bot_data.user = new User(bot_data.user, this.client);

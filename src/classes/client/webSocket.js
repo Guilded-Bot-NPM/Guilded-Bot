@@ -1,11 +1,11 @@
 const { EventEmitter } = require("events");
 const { WebSocket } = require("ws");
-const Message = require("../structures/message");
-const User = require("../structures/user/user");
-const Member = require("../structures/user/member");
-const MemberBan = require("../structures/user/memberban");
-const Webhook = require("../structures/webhook");
-const Reaction = require("../structures/reaction");
+const Message = require("../structures/message.js");
+const User = require("../structures/user/user.js");
+const Member = require("../structures/member/member.js");
+const MemberBan = require("../structures/user/memberBan.js");
+const Webhook = require("../structures/webhook.js");
+const Reaction = require("../structures/reaction.js");
 const { version } = require("../../../package.json");
 
 /**

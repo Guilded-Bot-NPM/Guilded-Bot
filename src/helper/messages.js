@@ -1,6 +1,6 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const Messages = require("../classes/structures/message");
+const Messages = require("../classes/structures/message.js");
 
 /**
  * Send a message to a selected channel

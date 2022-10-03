@@ -1,7 +1,7 @@
-const msgs = require("../../helper/Messages");
-const guser = require("../../helper/Members");
-const User = require("./user/user");
-const Reaction = require("./reaction");
+const msgs = require("../../helper/messages.js");
+const guser = require("../../helper/members.js");
+const User = require("./user/user.js");
+const Reaction = require("./reaction.js");
 
 /**
  * Represents a message

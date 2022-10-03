@@ -1,7 +1,7 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const NewUser = require("../classes/structures/user/user");
-const Member = require("../classes/structures/user/member");
+const NewUser = require("../classes/structures/user/user.js");
+const Member = require("../classes/structures/member/member.js");
 
 /**
  * Get the avatar URL of a user

@@ -1,4 +1,4 @@
-const member = require("../../../helper/Members.js");
+const member = require("../../../helper/members.js");
 
 class User {
   /**

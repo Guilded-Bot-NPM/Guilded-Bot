@@ -1,51 +1,51 @@
 {
-  "name": "guilded-bot",
-  "version": "1.0.7",
-  "description": "A library for interacting with the Guilded API for your Guilded Bot",
-  "main": "src/index.js",
-  "scripts": {
-    "dev": "nodemon --trace-warnings test/bot/index.js",
-    "start": "node src/index.js",
-    "docs": "jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose",
-    "docs-gh": "jsdoc --readme ./README.md -c ./jsdocs-gh.json ./src/index.js --verbose --destination ./docs",
-    "test": "jest --coverage --verbose"
-  },
-  "keywords": [
-    "guilded",
-    "bot",
-    "api",
-    "library"
-  ],
-  "homepage": "https://guildedbot.js.org"
-  "bugs": {
-      "url" : "https://github.com/guilded-bot-npm/guilded-bot/issues"
-  },
-  "contributors": [
-    {
-      "name": "MDCDEV",
-      "email": "mdc@mycommand.xyz",
-      "url": "https://mdcdev.me"
-    },
-    {
-      "name": "RellyLegend",
-      "url": "https://github.com/RellyLegend/guilded-api.js"
-    }
+   "name":"guilded-bot",
+   "version":"1.0.7",
+   "description":"A library for interacting with the Guilded API for your Guilded Bot",
+   "main":"src/index.js",
+   "scripts":{
+      "dev":"nodemon --trace-warnings test/bot/index.js",
+      "start":"node src/index.js",
+      "docs":"jsdoc --readme ./README.md -c ./jsdocs.json ./src/index.js --verbose",
+      "docs-gh":"jsdoc --readme ./README.md -c ./jsdocs-gh.json ./src/index.js --verbose --destination ./docs",
+      "test":"jest --coverage --verbose"
+   },
+   "keywords":[
+      "guilded",
+      "bot",
+      "api",
+      "library"
    ],
-  "repository": { 
-    "type": "git", 
-    "url": "https://github.com/Guilded-Bot-NPM/Guilded-Bot.git" 
-  }, 
-  "license": "MIT",
-  "dependencies": {
-    "axios": "^0.27.2",
-    "docdash": "^1.2.0",
-    "ws": "^8.9.0"
-  },
-  "devDependencies": {
-    "better-docs": "^2.7.2",
-    "clean-jsdoc-theme": "^4.1.8",
-    "dotenv": "^16.0.3",
-    "minami": "^1.2.3",
-    "nodemon": "^2.0.20"
-  }
+   "homepage":"https://guildedbot.js.org",
+   "bugs":{
+      "url":"https://github.com/guilded-bot-npm/guilded-bot/issues"
+   },
+   "contributors":[
+      {
+         "name":"MDCDEV",
+         "email":"mdc@mycommand.xyz",
+         "url":"https://mdcdev.me"
+      },
+      {
+         "name":"RellyLegend",
+         "url":"https://github.com/RellyLegend/guilded-api.js"
+      }
+   ],
+   "repository":{
+      "type":"git",
+      "url":"https://github.com/Guilded-Bot-NPM/Guilded-Bot.git"
+   },
+   "license":"MIT",
+   "dependencies":{
+      "axios":"^0.27.2",
+      "docdash":"^1.2.0",
+      "ws":"^8.9.0"
+   },
+   "devDependencies":{
+      "better-docs":"^2.7.2",
+      "clean-jsdoc-theme":"^4.1.8",
+      "dotenv":"^16.0.3",
+      "minami":"^1.2.3",
+      "nodemon":"^2.0.20"
+   }
 }

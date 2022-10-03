@@ -1,5 +1,4 @@
-const { Client } = require("../../client/client");
-const { User } = require("./user");
+const User = require("../user/user.js");
 
 class Member {
   /**
@@ -79,4 +78,4 @@ class Member {
   }
 }
 
-module.exports.Member = Member;
+module.exports = Member;

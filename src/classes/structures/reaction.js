@@ -79,4 +79,4 @@ class Reaction {
   }
 }
 
-module.exports.Reaction = Reaction;
+module.exports = Reaction;

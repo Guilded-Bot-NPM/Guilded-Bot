@@ -37,4 +37,4 @@ class UserSummary {
     }
 }
 
-module.exports.UserSummary = UserSummary;
+module.exports = UserSummary;

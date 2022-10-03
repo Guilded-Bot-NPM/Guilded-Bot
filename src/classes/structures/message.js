@@ -1,7 +1,7 @@
-const msgs = require("../../helper/messages");
-const guser = require("../../helper/members");
-const { User } = require("./user/user");
-const { Reaction } = require("./reaction");
+const msgs = require("../../helper/messages.js");
+const guser = require("../../helper/members.js");
+const User = require("./user/user.js");
+const Reaction = require("./reaction.js");
 
 /**
  * Represents a message
@@ -426,4 +426,4 @@ class Message {
   }
 }
 
-module.exports.Message = Message;
+module.exports = Message;

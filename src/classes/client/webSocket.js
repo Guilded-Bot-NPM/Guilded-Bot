@@ -1,11 +1,12 @@
 const { EventEmitter } = require("events");
 const { WebSocket } = require("ws");
-const { Message } = require("../structures/message");
-const { User } = require("../structures/user/user");
-const { Member } = require("../structures/user/member");
-const { MemberBan } = require("../structures/user/memberban");
-const { Webhook } = require("../structures/webhook");
-const { Reaction } = require("../structures/reaction");
+const Message = require("../structures/message.js");
+const User = require("../structures/user/user.js");
+const Member = require("../structures/member/member.js");
+const MemberBan = require("../structures/user/memberBan.js");
+const Webhook = require("../structures/webhook.js");
+const Reaction = require("../structures/reaction.js");
+const { version } = require("../../../package.json");
 
 /**
  * The ClientWebSocket class
@@ -41,6 +42,16 @@ class ClientWebSocket extends EventEmitter {
      */
     this.client = client;
 
+    //The version of the library
+    this.client.version = version;
+    // The platform the bot is running on, convert like this: process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'MacOS' : 'Linux'
+    this.client.platform =
+      process.platform === "win32"
+        ? "Windows"
+        : process.platform === "darwin"
+        ? "MacOS"
+        : "Linux";
+
     /**
      * Whether the WebSocket is connected or not
      * @type {boolean}
@@ -55,7 +66,7 @@ class ClientWebSocket extends EventEmitter {
      * @private
      */
     this.botID = null;
-    
+
     global.cache = new Map();
     global.cache.users = new Map();
     global.cache.members = new Map();
@@ -66,7 +77,6 @@ class ClientWebSocket extends EventEmitter {
      * @private
      */
     this.client.cache = global.cache;
-
   }
 
   /**
@@ -86,6 +96,7 @@ class ClientWebSocket extends EventEmitter {
     this.ws = new WebSocket(`wss://api.guilded.gg/v1/websocket`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "User-Agent": `Guilded-Bot/${this.client.version} (${this.client.platform}) Node.js (${process.version})`
       },
     });
 
@@ -180,4 +191,4 @@ class ClientWebSocket extends EventEmitter {
   }
 }
 
-module.exports.ClientWebSocket = ClientWebSocket;
+module.exports = ClientWebSocket;

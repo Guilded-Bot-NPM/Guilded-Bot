@@ -93,7 +93,7 @@ class ClientWebSocket extends EventEmitter {
   connect() {
     const token = this.client.token;
 
-    this.ws = new WebSocket(`wss://api.guilded.gg/v1/websocket`, {
+    this.ws = new WebSocket(`wss://www.guilded.gg/websocket/v1`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "User-Agent": `Guilded-Bot/${this.client.version} (${this.client.platform}) Node.js (${process.version})`

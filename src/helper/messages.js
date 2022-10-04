@@ -1,10 +1,8 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const Messages = require("../classes/structures/message.js");
 
 /**
  * Send a message to a selected channel
- * @param {*} Object
  * @param {Object} content The content of the message
  * @param {String} content.content The content of the message
  * @param {String} content.channelId The channel id of the message
@@ -39,7 +37,7 @@ module.exports.sendMessage = async (Object, Client) => {
       headers: {
         Authorization: `Bearer ${Client.token}`,
         "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
+        "User-Agent": `Guilded-Bot/${Client.version} (${Client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => {

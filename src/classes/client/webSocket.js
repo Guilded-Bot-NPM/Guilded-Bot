@@ -53,6 +53,7 @@ class ClientWebSocket extends EventEmitter {
      * The last heartbeat sent
      * @type {Number}
      * @private
+     * @readonly
      */
     this.lastHeartbeat = null;
 
@@ -60,8 +61,34 @@ class ClientWebSocket extends EventEmitter {
      * The last heartbeat acknowledged
      * @type {Number}
      * @private
+     * @readonly
      */
     this.lastHeartbeatAck = null;
+
+    /**
+     * The last heartbeat received
+     * @type {Number}
+     * @private
+     * @readonly
+     */
+    this.lastHeartbeatReceived = null;
+
+    /**
+     * Number of max tries to reconnect
+     * @type {Number}
+     * @private
+     * @readonly
+     * @default Infinity
+     */
+    this.reconnectTries = client.options?.maxReconnectTries || Infinity;
+
+    /**
+     * The current number of tries to reconnect
+     * @type {Number}
+     * @private
+     * @readonly
+     */
+    this.currentReconnectTries = 0;
 
     //The version of the library
     this.client.version = version;
@@ -103,13 +130,13 @@ class ClientWebSocket extends EventEmitter {
   /**
    * Connects the bot to the Guilded API
    * @returns {Promise<void>}
+   * @private
    * @example
    * client.ws.connect();
    * @example
    * client.ws.connect().then(() => {
    *   console.log('Bot is ready!');
    * });
-   * @private
    */
   connect() {
     const token = this.client.token;
@@ -144,22 +171,22 @@ class ClientWebSocket extends EventEmitter {
 
     this.ws.on("message", (data) => {
       if (JSON.parse(data).op === 1) {
-        this.emit("clientDebug", "[WS] Received heartbeat");
         this.client.user = JSON.parse(data).d.user;
-        //Time in unix epoch
         this.client.readyAt = new Date().getTime();
-        //Make function to get uptime
+        
         this.client.uptime = () => {
           return Math.round(
             (new Date().getTime() - this.client.readyAt) / 1000
           );
         };
-        let bot_data = JSON.parse(data).d;
-        this.botID = toString(bot_data.user.id);
-        bot_data.user = new User(bot_data.user, this.client);
-        this.heartbeatInterval = bot_data.heartbeatIntervalMs;
+
+        let allData = JSON.parse(data).d;
+        let bot_data = JSON.parse(data).d.user;
+        this.botID = toString(bot_data.id);
+        bot_data.user = new User(bot_data, this.client);
+        this.heartbeatInterval = allData.heartbeatIntervalMs;
         this.emit("clientDebug", "[WS] Received bot data");
-        this.emit("clientDebug", "[WS] Sending heartbeat");
+        this.emit("clientDebug", "[WS] Sending first heartbeat");
         this.ws.ping(
           JSON.stringify({
             op: 1,
@@ -167,19 +194,31 @@ class ClientWebSocket extends EventEmitter {
           })
         );
         this.lastHeartbeat = new Date().getTime();
-        this.emit("clientReady", bot_data);
-        const heartbeat = setInterval(() => {
+        this.lastHeartbeatAck = new Date().getTime();
+        this.emit("clientReady", allData);
+        const heartbeat = setInterval(async () => {
           if (!this.lastHeartbeatAck && !this.heartbeatInterval) return;
           if (
-            new Date().getTime() - this.lastHeartbeatAck >
+            new Date().getTime() - this.lastHeartbeat >
             this.heartbeatInterval + 2500
           ) {
             this.emit("clientDebug", "[WS] No heartbeat ack");
             this.emit("clientDebug", "[WS] Reconnecting");
             clearInterval(heartbeat);
             this.heartbeatInterval = null;
+            this.connected = false;
             this.ws.close();
-            this.connect();
+
+            // Wait the this.currentReconnectTries * 5000 before reconnecting
+            if (this.currentReconnectTries < this.reconnectTries) {
+              this.currentReconnectTries++;
+              await new Promise((r) => setTimeout(r, 5000));
+              this.connect();
+            } else {
+              this.emit("clientDebug", "[WS] Max reconnect tries reached");
+              this.emit("clientError", new Error("Max reconnect tries reached"));
+              return;
+            }
           }
 
           this.emit("clientDebug", "[WS] Sending heartbeat");
@@ -190,65 +229,64 @@ class ClientWebSocket extends EventEmitter {
             })
           );
           this.lastHeartbeat = new Date().getTime();
+          this.lastHeartbeatAck = null;
         }, this.heartbeatInterval);
       }
+    });
 
+    this.ws.on("message", (data) => {
       const { t: eventType, d: eventData } = JSON.parse(data);
 
-      try {
-        switch (eventType) {
-          case "ChatMessageCreated":
-            if (eventData.message.createdBy === this.botID) break;
-            this.emit(
-              "messageCreated",
-              new Message(eventData.message, this.client)
-            );
-            break;
-          case "ChatMessageUpdated":
-            if (eventData.message.createdBy === this.botID) break;
-            this.emit(
-              "messageUpdated",
-              new Message(eventData.message, this.client)
-            );
-            break;
-          case "ChatMessageDeleted":
-            if (eventData.message.createdBy === this.botID) break;
-            this.emit(
-              "messageDeleted",
-              new Message(eventData.message, this.client)
-            );
-            break;
-          case "TeamMemberJoined":
-            this.emit("memberAdded", new Member(eventData));
-            break;
-          case "TeamMemberRemoved":
-            this.emit("memberRemoved", new Member(eventData));
-            break;
-          case "TeamMemberBanned":
-            this.emit("memberBanned", new MemberBan(eventData));
-            break;
-          case "TeamMemberUnbanned":
-            this.emit("memberUnbanned", new MemberBan(eventData));
-            break;
-          case "TeamMemberUpdated":
-            this.emit("memberUpdated", new Member(eventData));
-            break;
-          case "teamRolesUpdated":
-            this.emit("memberRolesUpdated", new Member(eventData));
-            break;
-          case "TeamWebhookCreated":
-            this.emit("webhookCreated", new Webhook(eventData));
-            break;
-          case "TeamWebhookUpdated":
-            this.emit("webhookUpdated", new Webhook(eventData));
-            break;
-          case "ChannelMessageReactionCreated":
-            this.emit("messageReactionCreated", new Reaction(eventData));
-          case "ChannelMessageReactionDeleted":
-            this.emit("messageReactionDeleted", new Reaction(eventData));
-        }
-      } catch (e) {
-        this.emit("clientError", e);
+      switch (eventType) {
+        case "ChatMessageCreated":
+          if (eventData.message.createdBy === this.botID) break;
+          this.emit(
+            "messageCreated",
+            new Message(eventData.message, this.client)
+          );
+          break;
+        case "ChatMessageUpdated":
+          if (eventData.message.createdBy === this.botID) break;
+          this.emit(
+            "messageUpdated",
+            new Message(eventData.message, this.client)
+          );
+          break;
+        case "ChatMessageDeleted":
+          if (eventData.message.createdBy === this.botID) break;
+          this.emit(
+            "messageDeleted",
+            new Message(eventData.message, this.client)
+          );
+          break;
+        case "TeamMemberJoined":
+          this.emit("memberAdded", new Member(eventData));
+          break;
+        case "TeamMemberRemoved":
+          this.emit("memberRemoved", new Member(eventData));
+          break;
+        case "TeamMemberBanned":
+          this.emit("memberBanned", new MemberBan(eventData));
+          break;
+        case "TeamMemberUnbanned":
+          this.emit("memberUnbanned", new MemberBan(eventData));
+          break;
+        case "TeamMemberUpdated":
+          this.emit("memberUpdated", new Member(eventData));
+          break;
+        case "teamRolesUpdated":
+          this.emit("memberRolesUpdated", new Member(eventData));
+          break;
+        case "TeamWebhookCreated":
+          this.emit("webhookCreated", new Webhook(eventData));
+          break;
+        case "TeamWebhookUpdated":
+          this.emit("webhookUpdated", new Webhook(eventData));
+          break;
+        case "ChannelMessageReactionCreated":
+          this.emit("messageReactionCreated", new Reaction(eventData));
+        case "ChannelMessageReactionDeleted":
+          this.emit("messageReactionDeleted", new Reaction(eventData));
       }
     });
 

@@ -12,12 +12,14 @@ class Client extends EventEmitter {
    * Creates a new bot instance.
    * See {@tutorial example-bot} for an example
    * @param {String} token Your guilded bot's Auth Token
+   * @param {Object} [options] Options for the client
+   * @param {String} [options.maxReconnectTries=Infinity] The maximum number of times to retry a request or reconnect
    * @returns {Client}
    * @example
    * const { Client } = require('guilded.js');
    * const client = new Client('token');
    */
-  constructor (token = String) {
+  constructor (token = String, options = Object) {
     super()
 
     /**
@@ -33,6 +35,13 @@ class Client extends EventEmitter {
      * @readonly
      */
     this.ws = null
+
+    /**
+     * The options of the bot
+     * @type {Object}
+     * @readonly
+     */
+    this.options = options
   }
 
   /**

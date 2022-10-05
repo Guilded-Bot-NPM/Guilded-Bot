@@ -78,7 +78,7 @@ class Client extends EventEmitter {
      *   console.log('Bot is ready!');
      * });
      */
-    this.ws.on('open', (client) => {
+    this.ws.on('clientReady', (client) => {
       this.emit('ready', client)
     })
 
@@ -259,9 +259,23 @@ class Client extends EventEmitter {
      *  console.log(error);
      * });
      */
-    this.ws.on('error', (error) => {
+    this.ws.on('clientError', (error) => {
       this.emit('error', error)
     })
+
+    /**
+     * Emitted when the bot receives a debug event
+     * @event Client#debug
+     * @param {String} message
+     * @example
+     * client.on('debug', (message) => {
+     *  console.log(message);
+     * });
+     */
+    this.ws.on('clientDebug', (message) => {
+      this.emit('debug', message)
+    })
+    
 
     /**
      * Delete the client

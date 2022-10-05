@@ -42,6 +42,27 @@ class ClientWebSocket extends EventEmitter {
      */
     this.client = client;
 
+    /**
+     * The heartbeat interval
+     * @type {Number}
+     * @private
+     */
+    this.heartbeatInterval = null;
+
+    /**
+     * The last heartbeat sent
+     * @type {Number}
+     * @private
+     */
+    this.lastHeartbeat = null;
+
+    /**
+     * The last heartbeat acknowledged
+     * @type {Number}
+     * @private
+     */
+    this.lastHeartbeatAck = null;
+
     //The version of the library
     this.client.version = version;
     // The platform the bot is running on, convert like this: process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'MacOS' : 'Linux'
@@ -93,19 +114,37 @@ class ClientWebSocket extends EventEmitter {
   connect() {
     const token = this.client.token;
 
-    this.ws = new WebSocket(`wss://www.guilded.gg/websocket/v1`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "User-Agent": `Guilded-Bot/${this.client.version} (${this.client.platform}) Node.js (${process.version})`
-      },
-    });
+    try {
+      this.ws = new WebSocket(`wss://www.guilded.gg/websocket/v1`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "User-Agent": `Guilded-Bot/${this.client.version} (${this.client.platform}) Node.js (${process.version})`,
+        },
+      });
+    } catch (err) {
+      //If the error is the link being invalid, throw a new error
+      if (err.message === "Invalid WebSocket frame: invalid status code 400")
+        throw new Error(
+          "Invalid token! Please make sure you are using a valid token."
+        );
+      //If the error is the token being invalid, throw a new error
+      if (err.message === "Invalid WebSocket frame: invalid status code 401")
+        throw new Error(
+          "Invalid token! Please make sure you are using a valid token."
+        );
+      this.emit("clientDebug", "[WS] Error connecting to Guilded WebSocket");
+      this.emit("clientError", err);
+      return;
+    }
 
     this.ws.on("open", () => {
+      this.emit("clientDebug", "[WS] Connected to the Guilded API");
       this.connected = true;
     });
 
     this.ws.on("message", (data) => {
       if (JSON.parse(data).op === 1) {
+        this.emit("clientDebug", "[WS] Received heartbeat");
         this.client.user = JSON.parse(data).d.user;
         //Time in unix epoch
         this.client.readyAt = new Date().getTime();
@@ -118,7 +157,40 @@ class ClientWebSocket extends EventEmitter {
         let bot_data = JSON.parse(data).d;
         this.botID = toString(bot_data.user.id);
         bot_data.user = new User(bot_data.user, this.client);
-        this.emit("open", bot_data);
+        this.heartbeatInterval = bot_data.heartbeatIntervalMs;
+        this.emit("clientDebug", "[WS] Received bot data");
+        this.emit("clientDebug", "[WS] Sending heartbeat");
+        this.ws.ping(
+          JSON.stringify({
+            op: 1,
+            d: null,
+          })
+        );
+        this.lastHeartbeat = new Date().getTime();
+        this.emit("clientReady", bot_data);
+        const heartbeat = setInterval(() => {
+          if (!this.lastHeartbeatAck && !this.heartbeatInterval) return;
+          if (
+            new Date().getTime() - this.lastHeartbeatAck >
+            this.heartbeatInterval + 2500
+          ) {
+            this.emit("clientDebug", "[WS] No heartbeat ack");
+            this.emit("clientDebug", "[WS] Reconnecting");
+            clearInterval(heartbeat);
+            this.heartbeatInterval = null;
+            this.ws.close();
+            this.connect();
+          }
+
+          this.emit("clientDebug", "[WS] Sending heartbeat");
+          this.ws.ping(
+            JSON.stringify({
+              op: 1,
+              d: null,
+            })
+          );
+          this.lastHeartbeat = new Date().getTime();
+        }, this.heartbeatInterval);
       }
 
       const { t: eventType, d: eventData } = JSON.parse(data);
@@ -176,17 +248,32 @@ class ClientWebSocket extends EventEmitter {
             this.emit("messageReactionDeleted", new Reaction(eventData));
         }
       } catch (e) {
-        this.emit("error", e);
+        this.emit("clientError", e);
+      }
+    });
+
+    this.ws.on("pong", (response) => {
+      const r = JSON.parse(response);
+      if (r.op === 1) {
+        this.emit("clientDebug", "[WS] Received heartbeat");
+        this.lastHeartbeatAck = new Date().getTime();
+      }
+
+      if (r.op === 8) {
+        this.emit("clientDebug", "[WS] Failed to send heartbeat");
+        this.emit("clientError", new Error("Failed to send heartbeat"));
       }
     });
 
     this.ws.on("close", () => {
       this.connected = false;
-      this.emit("closed");
+      this.emit("debug", "[WS] Disconnected from the Guilded API");
+      // Try to reconnect
+      this.emit("debug", "[WS] Attempting to reconnect...");
     });
 
     this.ws.on("error", (error) => {
-      this.emit("error", error);
+      this.emit("clientError", error);
     });
   }
 }

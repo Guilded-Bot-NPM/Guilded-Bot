@@ -1,7 +1,11 @@
-const { endpoints } = require("./endpoints");
-const axios = require("axios");
+const {
+  endpoints
+} = require("./endpoints");
 const NewUser = require("../classes/structures/user/user.js");
 const Member = require("../classes/structures/member/member.js");
+const {
+  GET
+} = require("../utils/HTTP.js");
 
 /**
  * Get the avatar URL of a user
@@ -10,33 +14,19 @@ const Member = require("../classes/structures/member/member.js");
  * @ignore
  */
 exports.updateAvatarUser = async (User) => {
-  const userData = await axios
-    .get(`${endpoints.SERVER_MEMBERS(User.raw.serverId, User.id)}`, {
-      headers: {
-        Authorization: `Bearer ${User.client.token}`,
-        "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
-      },
-    })
-    .then((res) => res.data)
-    .catch((err) => err);
 
-  if (userData.code) return User;
+  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.raw.serverId, User.id)}`, User.client);
 
   const newUser = new NewUser(userData.member.user, User.client);
 
   // Check properties of new user and old user
   for (const property in newUser) {
-    if (newUser[property] !== User[property]) {
+    if (newUser[property] !== User[property] && Boolean(User[property])) {
       User[property] = newUser[property];
     }
   }
 
-  User.avatar =
-    User.avatar ??
-    "https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_" +
-      Math.floor(Math.random() * 4 + 1) +
-      ".png";
+  User.client.cache.users.set(User.id, User);
 
   return User;
 };
@@ -48,24 +38,13 @@ exports.updateAvatarUser = async (User) => {
  * @ignore
  */
 exports.updateBannerUser = async (User) => {
-  const userData = await axios
-    .get(`${endpoints.SERVER_MEMBERS(User.raw.serverId, User.id)}`, {
-      headers: {
-        Authorization: `Bearer ${User.client.token}`,
-        "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
-      },
-    })
-    .then((res) => res.data)
-    .catch((err) => err);
-
-  if (userData.code) return User;
+  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.raw.serverId, User.id)}`, User.client);
 
   const newUser = new NewUser(userData.member.user, User.client);
 
   // Check properties of new user and old user
   for (const property in newUser) {
-    if (newUser[property] !== User[property]) {
+    if (newUser[property] !== User[property] && Boolean(User[property])) {
       User[property] = newUser[property];
     }
   }
@@ -77,51 +56,42 @@ exports.updateBannerUser = async (User) => {
 
 /**
  * Get a member from the API
- * @param {String} userId
- * @param {String} serverId
- * @param {String} token
+ * @param {User} User The user object
  * @returns {Member} The member object
  * @ignore
  */
-exports.getMember = async (user, client) => {
-  const memberData = await axios
-    .get(`${endpoints.SERVER_MEMBERS(user.serverId, user.id)}`, {
-      headers: {
-        Authorization: `Bearer ${client.token}`,
-        "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
-      },
-    })
-    .then((res) => res.data)
-    .catch((err) => err);
+exports.getMember = async (User) => {
+  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.serverId, User.id)}`, User.client);
 
-  if (memberData.code) return null;
+  const newUser = new Member(userData.member.user, User.client);
 
-  return new Member(memberData.member, client);
+  // Check properties of new user and old user
+  for (const property in newUser) {
+    if (newUser[property] !== User[property] && Boolean(User[property])) {
+      User[property] = newUser[property];
+    }
+  }
+
+  return User;
 };
 
 /**
  * Get a user from the API
- * @param {Object} user Provicial user object
- * @param {String} user.id The user ID
- * @param {String} user.serverId The server ID
- * @param {String} token The bot token
+ * @param {User} User The user object
  * @returns {User} The user object
  * @ignore
  */
-exports.getUser = async (user, client) => {
-  const userData = await axios
-    .get(`${endpoints.SERVER_MEMBERS(user.serverId, user.id)}`, {
-      headers: {
-        Authorization: `Bearer ${client.token}`,
-        "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
-      },
-    })
-    .then((res) => res.data)
-    .catch((err) => err);
+exports.getUser = async (User) => {
+  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.serverId, User.id)}`, User.client);
 
-  if (userData.code) return null;
+  const newUser = new NewUser(userData.member.user, User.client);
 
-  return new NewUser(userData.member.user, client);
+  // Check properties of new user and old user
+  for (const property in newUser) {
+    if (newUser[property] !== User[property] && Boolean(User[property])) {
+      User[property] = newUser[property];
+    }
+  }
+
+  return User;
 };

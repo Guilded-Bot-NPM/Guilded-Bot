@@ -1,10 +1,9 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const Messages = require("../classes/structures/message.js");
+const Message = require("../classes/structures/message");
 
 /**
  * Send a message to a selected channel
- * @param {*} Object
  * @param {Object} content The content of the message
  * @param {String} content.content The content of the message
  * @param {String} content.channelId The channel id of the message
@@ -12,18 +11,20 @@ const Messages = require("../classes/structures/message.js");
  * @param {Boolean} content.isSilent If the message is silent
  * @param {Array} content.replyMessageIds The message ids to reply to
  * @param {Array} content.embeds The embeds to send
- * @param {Client} client The client that emitted the event
+ * @param {Client} content.client The client object
  * @returns {Message} The message object
  * @private
  * @ignore
  */
-module.exports.sendMessage = async (Object, Client) => {
-  let message = Object.content;
-  let channelId = Object.channelId;
-  let isPrivate = Object.isPrivate ? true : false;
-  let isSilent = Object.isSilent ? true : false;
-  let replyMessageIds = Object.replyMessageIds ? Object.replyMessageIds : null;
-  let embeds = Object.embeds ? Object.embeds : null;
+module.exports.sendMessage = async (MessageObject) => {
+  let message = MessageObject.content;
+  let channelId = MessageObject.channelId;
+  let isPrivate = MessageObject.isPrivate ? true : false;
+  let isSilent = MessageObject.isSilent ? true : false;
+  let replyMessageIds = MessageObject.replyMessageIds
+    ? MessageObject.replyMessageIds
+    : null;
+  let embeds = MessageObject.embeds ? MessageObject.embeds : null;
 
   let final_Json = {
     content: message,
@@ -37,16 +38,14 @@ module.exports.sendMessage = async (Object, Client) => {
   return await axios
     .post(`${endpoints.CHANNELS_MESSAGES(channelId)}`, final_Json, {
       headers: {
-        Authorization: `Bearer ${Client.token}`,
+        Authorization: `Bearer ${MessageObject.client.token}`,
         "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
+        "User-Agent": `Guilded-Bot/${MessageObject.client.version} (${MessageObject.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => {
       //Make a new message object
-      const messageData = res.data.message;
-      const Message = new Messages.Message(messageData, Client);
-      return Message;
+      return new Message(res.data.message, MessageObject.client);
     })
     .catch((err) => err);
 };
@@ -60,19 +59,21 @@ module.exports.sendMessage = async (Object, Client) => {
  * @param {Boolean} content.isSilent If the message is silent
  * @param {Array} content.replyMessageIds The message ids to reply to
  * @param {Array} content.embeds The embeds to send
- * @param {Client} Client The client object
+ * @param {Client} content.client The client object
  * @return {Message} The message object
  * @private
  * @ignore
  */
-module.exports.editMessage = async (Object, Client) => {
-  let message = Object.content;
-  let channelId = Object.channelId;
-  let isPrivate = Object.isPrivate ? true : false;
-  let isSilent = Object.isSilent ? true : false;
-  let replyMessageIds = Object.replyMessageIds ? Object.replyMessageIds : null;
-  let embeds = Object.embeds ? Object.embeds : null;
-  let messageId = Object.id;
+module.exports.editMessage = async (MessageObject) => {
+  let message = MessageObject.content;
+  let channelId = MessageObject.channelId;
+  let isPrivate = MessageObject.isPrivate ? true : false;
+  let isSilent = MessageObject.isSilent ? true : false;
+  let replyMessageIds = MessageObject.replyMessageIds
+    ? MessageObject.replyMessageIds
+    : null;
+  let embeds = MessageObject.embeds ? MessageObject.embeds : null;
+  let messageId = MessageObject.id;
 
   let final_Json = {
     content: message,
@@ -91,16 +92,14 @@ module.exports.editMessage = async (Object, Client) => {
   return await axios
     .put(`${endpoints.MESSSAGE(channelId, messageId)}`, final_Json, {
       headers: {
-        Authorization: `Bearer ${Client.token}`,
+        Authorization: `Bearer ${MessageObject.client.token}`,
         "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
+        "User-Agent": `Guilded-Bot/${MessageObject.client.version} (${MessageObject.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => {
       //Make a new message object
-      const messageData = res.data.message;
-      const Message = new Messages.Message(messageData, Client);
-      return Message;
+      return new Message(res.data.message, MessageObject.client);
     })
     .catch((err) => err);
 };
@@ -111,15 +110,15 @@ module.exports.editMessage = async (Object, Client) => {
  * @param {String} content.channelId The channel id of the message
  * @param {String} content.id The message id
  * @param {Number} content.timeout The timeout of the message
- * @param {Client} Client The client object
+ * @param {Client} content.client The client object
  * @return {Message} The message object
  * @private
  * @ignore
  */
-module.exports.deleteMessage = async (Object, Client) => {
-  let channelId = Object.channelId;
-  let messageId = Object.id;
-  let timeout = Object.timeout || 0;
+module.exports.deleteMessage = async (MessageObject) => {
+  let channelId = MessageObject.channelId;
+  let messageId = MessageObject.id;
+  let timeout = MessageObject.timeout || 0;
 
   //Wait for timeout
   await new Promise((resolve) => setTimeout(resolve, timeout));
@@ -127,9 +126,9 @@ module.exports.deleteMessage = async (Object, Client) => {
   return await axios
     .delete(`${endpoints.MESSSAGE(channelId, messageId)}`, {
       headers: {
-        Authorization: `Bearer ${Client.token}`,
+        Authorization: `Bearer ${MessageObject.client.token}`,
         "Content-Type": "application/json",
-        "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
+        "User-Agent": `Guilded-Bot/${MessageObject.client.version} (${MessageObject.client.platform}) Node.js (${process.version})`,
       },
     })
     .then((res) => {
@@ -137,9 +136,8 @@ module.exports.deleteMessage = async (Object, Client) => {
       if (res.status === 204) {
         return "Message deleted";
       }
-      const messageData = res.data.message;
-      const Message = new Messages.Message(messageData, Client);
-      return Message;
+
+      return new Message(res.data.message, MessageObject.client);
     })
     .catch((err) => err);
 };
@@ -150,15 +148,15 @@ module.exports.deleteMessage = async (Object, Client) => {
  * @param {String} content.channelId The channel id of the message
  * @param {String} content.id The message id
  * @param {String} content.emojiId The emoji id
- * @param {Client} Client The client object
+ * @param {Client} content.client The client object
  * @returns {Reaction} The reaction object
  * @private
  * @ignore
  */
-module.exports.reactMessage = async (Object, Client) => {
-  let channelId = Object.channelId;
-  let messageId = Object.id;
-  let emojiId = Object.emojiId;
+module.exports.reactMessage = async (MessageObject) => {
+  let channelId = MessageObject.channelId;
+  let messageId = MessageObject.id;
+  let emojiId = MessageObject.emojiId;
 
   return await axios
     .put(
@@ -166,9 +164,9 @@ module.exports.reactMessage = async (Object, Client) => {
       {},
       {
         headers: {
-          Authorization: `Bearer ${Client.token}`,
+          Authorization: `Bearer ${MessageObject.client.token}`,
           "Content-Type": "application/json",
-          "User-Agent": `Guilded-Bot/${User.client.version} (${User.client.platform}) Node.js (${process.version})`,
+          "User-Agent": `Guilded-Bot/${MessageObject.client.version} (${MessageObject.client.platform}) Node.js (${process.version})`,
         },
       }
     )

@@ -12,12 +12,14 @@ class Client extends EventEmitter {
    * Creates a new bot instance.
    * See {@tutorial example-bot} for an example
    * @param {String} token Your guilded bot's Auth Token
+   * @param {Object} [options] Options for the client
+   * @param {String} [options.maxReconnectTries=Infinity] The maximum number of times to retry a request or reconnect
    * @returns {Client}
    * @example
    * const { Client } = require('guilded.js');
    * const client = new Client('token');
    */
-  constructor (token = String) {
+  constructor (token = String, options = Object) {
     super()
 
     /**
@@ -33,6 +35,13 @@ class Client extends EventEmitter {
      * @readonly
      */
     this.ws = null
+
+    /**
+     * The options of the bot
+     * @type {Object}
+     * @readonly
+     */
+    this.options = options
   }
 
   /**
@@ -78,7 +87,7 @@ class Client extends EventEmitter {
      *   console.log('Bot is ready!');
      * });
      */
-    this.ws.on('open', (client) => {
+    this.ws.on('clientReady', (client) => {
       this.emit('ready', client)
     })
 
@@ -137,10 +146,10 @@ class Client extends EventEmitter {
     /**
      * Emitted when the bot receives a member leave
      * @event Client#memberLeave
-     * @param {Member} member
+     * @param {MemberRemoved} member
      * @example
      * client.on('serverMemberLeft', (member) => {
-     *   console.log(member.nickname);
+     *   console.log(member.username);
      * });
      */
     this.ws.on('memberRemoved', (member) => {
@@ -174,16 +183,29 @@ class Client extends EventEmitter {
     })
 
     /**
-     * Emitted when the bot receives a member role update
-     * @event Client#memberRoleUpdate
-     * @param {Member} member
+     * Emitted when the bot receives a member update
+     * @event Client#memberUpdate
+     * @param {MemberUpdated} member
      * @example
      * client.on('serverMemberUpdate', (member) => {
-     *   console.log(member.nickname);
+     *   console.log(member.username);
      * });
      */
-    this.ws.on('memberRolesUpdated', (member) => {
+    this.ws.on('memberUpdated', (member) => {
       this.emit('serverMemberUpdate', member)
+    })
+
+    /**
+     * Emitted when the bot receives a member role update
+     * @event Client#memberRoleUpdate
+     * @param {RolesUpdated} rolesUpdated
+     * @example
+     * client.on('serverMemberUpdate', (rolesUpdated) => {
+     *   console.log(rolesUpdated[0]);
+     * });
+     */
+    this.ws.on('memberRolesUpdated', (rolesUpdated) => {
+      this.emit('serverMemberUpdate', rolesUpdated)
     })
 
     /**
@@ -259,9 +281,23 @@ class Client extends EventEmitter {
      *  console.log(error);
      * });
      */
-    this.ws.on('error', (error) => {
+    this.ws.on('clientError', (error) => {
       this.emit('error', error)
     })
+
+    /**
+     * Emitted when the bot receives a debug event
+     * @event Client#debug
+     * @param {String} message
+     * @example
+     * client.on('debug', (message) => {
+     *  console.log(message);
+     * });
+     */
+    this.ws.on('clientDebug', (message) => {
+      this.emit('debug', message)
+    })
+    
 
     /**
      * Delete the client

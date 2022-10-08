@@ -63,7 +63,10 @@ class User {
      * The user created at timestamp
      * @type {number}
      */
-    this.createdTimestamp = this.createdAt.getTime();
+    this.createdTimestamp = // If created at is not a date or if is NaN, return null
+      this.createdAt instanceof Date && !isNaN(this.createdAt)
+        ? this.createdAt.getTime()
+        : null;
 
     /**
      * The user default avatar
@@ -105,15 +108,27 @@ class User {
     if (global.cache.users.has(this.id)) {
       const oldData = global.cache.users.get(this.id);
       for (const key in this.raw) {
-        if (
-          this.raw[key] &&
-          !oldData.raw[key] &&
-          this.raw[key] !== NaN &&
-          this.raw[key] !== null &&
-          this.raw[key] !== undefined
-        ) {
-          oldData.raw[key] = this.raw[key];
+        if (Boolean(this.raw[key]) &&
+          (oldData[key] !== this.raw[key] || oldData[key] === undefined || oldData[key] === null)) {
+          oldData[key] = this[key];
         }
+      }
+      global.cache.users.set(this.id, oldData);
+
+      // Set all data to this
+      for (const key in oldData) {
+        if (key === "createdTimestamp") continue;
+
+        // If exists in this
+        if (this[key] !== undefined && this[key] !== null) {
+          this[key] = oldData[key];
+        }
+
+        // Check the createdTimestamp, if exist createdAt, and is a date, create the createdTimestamp
+        if (key === "createdAt" && this.createdAt instanceof Date) {
+          this.createdTimestamp = this.createdAt.getTime();
+        }
+
       }
     } else {
       global.cache.users.set(this.id, this);

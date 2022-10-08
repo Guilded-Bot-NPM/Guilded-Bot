@@ -146,10 +146,10 @@ class Client extends EventEmitter {
     /**
      * Emitted when the bot receives a member leave
      * @event Client#memberLeave
-     * @param {Member} member
+     * @param {MemberRemoved} member
      * @example
      * client.on('serverMemberLeft', (member) => {
-     *   console.log(member.nickname);
+     *   console.log(member.username);
      * });
      */
     this.ws.on('memberRemoved', (member) => {
@@ -183,16 +183,29 @@ class Client extends EventEmitter {
     })
 
     /**
-     * Emitted when the bot receives a member role update
-     * @event Client#memberRoleUpdate
-     * @param {Member} member
+     * Emitted when the bot receives a member update
+     * @event Client#memberUpdate
+     * @param {MemberUpdated} member
      * @example
      * client.on('serverMemberUpdate', (member) => {
-     *   console.log(member.nickname);
+     *   console.log(member.username);
      * });
      */
-    this.ws.on('memberRolesUpdated', (member) => {
+    this.ws.on('memberUpdated', (member) => {
       this.emit('serverMemberUpdate', member)
+    })
+
+    /**
+     * Emitted when the bot receives a member role update
+     * @event Client#memberRoleUpdate
+     * @param {RolesUpdated} rolesUpdated
+     * @example
+     * client.on('serverMemberUpdate', (rolesUpdated) => {
+     *   console.log(rolesUpdated[0]);
+     * });
+     */
+    this.ws.on('memberRolesUpdated', (rolesUpdated) => {
+      this.emit('serverMemberUpdate', rolesUpdated)
     })
 
     /**

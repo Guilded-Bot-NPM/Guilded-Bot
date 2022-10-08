@@ -3,9 +3,13 @@ const { WebSocket } = require("ws");
 const Message = require("../structures/message.js");
 const User = require("../structures/user/user.js");
 const Member = require("../structures/member/member.js");
+const MemberRemoved = require("../structures/member/memberRemove.js");
 const MemberBan = require("../structures/member/memberBan.js");
 const Webhook = require("../structures/webhook.js");
 const Reaction = require("../structures/reaction.js");
+const MemberUpdated = require("../structures/member/memberUpdated.js");
+const RolesUpdated = require("../structures/roles/rolesUpdated.js");
+
 const { version } = require("../../../package.json");
 
 /**
@@ -138,7 +142,7 @@ class ClientWebSocket extends EventEmitter {
    *   console.log('Bot is ready!');
    * });
    */
-  connect() {
+  async connect() {
     const token = this.client.token;
 
     try {
@@ -161,7 +165,21 @@ class ClientWebSocket extends EventEmitter {
         );
       this.emit("clientDebug", "[WS] Error connecting to Guilded WebSocket");
       this.emit("clientError", err);
-      return;
+
+      // return this.connect(); wait for the new reconnect system
+
+      await new Promise((resolve) => setTimeout(resolve, this.currentReconnectTries * 5000));
+
+      this.currentReconnectTries++;
+
+      if (this.currentReconnectTries >= this.reconnectTries) {
+        this.emit("clientDebug", "[WS] Max reconnect tries reached");
+        this.emit("clientError", err);
+        return;
+      }
+
+      this.emit("clientDebug", "[WS] Reconnecting...");
+      this.connect();
     }
 
     this.ws.on("open", () => {
@@ -190,7 +208,9 @@ class ClientWebSocket extends EventEmitter {
         this.ws.ping(
           JSON.stringify({
             op: 1,
-            d: null,
+            d: {
+              heartbeatIntervalMs: this.heartbeatInterval,
+            }
           })
         );
         this.lastHeartbeat = new Date().getTime();
@@ -212,7 +232,7 @@ class ClientWebSocket extends EventEmitter {
             // Wait the this.currentReconnectTries * 5000 before reconnecting
             if (this.currentReconnectTries < this.reconnectTries) {
               this.currentReconnectTries++;
-              await new Promise((r) => setTimeout(r, 5000));
+              await new Promise((r) => setTimeout(r, this.currentReconnectTries * 5000));
               this.connect();
             } else {
               this.emit("clientDebug", "[WS] Max reconnect tries reached");
@@ -260,22 +280,23 @@ class ClientWebSocket extends EventEmitter {
           );
           break;
         case "TeamMemberJoined":
-          this.emit("memberAdded", new Member(eventData));
+          eventData.member.serverId = eventData.serverId;
+          this.emit("memberAdded", new Member(eventData.member, this.client));
           break;
         case "TeamMemberRemoved":
-          this.emit("memberRemoved", new Member(eventData));
+          this.emit("memberRemoved", new MemberRemoved(eventData, this.client));
           break;
         case "TeamMemberBanned":
-          this.emit("memberBanned", new MemberBan(eventData));
+          this.emit("memberBanned", new MemberBan(eventData, this.client));
           break;
         case "TeamMemberUnbanned":
-          this.emit("memberUnbanned", new MemberBan(eventData));
+          this.emit("memberUnbanned", new MemberBan(eventData, this.client));
           break;
         case "TeamMemberUpdated":
-          this.emit("memberUpdated", new Member(eventData));
+          this.emit("memberUpdated", new MemberUpdated(eventData, this.client));
           break;
         case "teamRolesUpdated":
-          this.emit("memberRolesUpdated", new Member(eventData));
+          this.emit("memberRolesUpdated", new RolesUpdated(eventData, this.client));
           break;
         case "TeamWebhookCreated":
           this.emit("webhookCreated", new Webhook(eventData));
@@ -308,6 +329,7 @@ class ClientWebSocket extends EventEmitter {
       this.emit("debug", "[WS] Disconnected from the Guilded API");
       // Try to reconnect
       this.emit("debug", "[WS] Attempting to reconnect...");
+      this.connect();
     });
 
     this.ws.on("error", (error) => {

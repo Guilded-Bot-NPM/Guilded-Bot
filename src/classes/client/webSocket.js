@@ -259,21 +259,18 @@ class ClientWebSocket extends EventEmitter {
 
       switch (eventType) {
         case "ChatMessageCreated":
-          if (eventData.message.createdBy === this.botID) break;
           this.emit(
             "messageCreated",
             new Message(eventData.message, this.client)
           );
           break;
         case "ChatMessageUpdated":
-          if (eventData.message.createdBy === this.botID) break;
           this.emit(
             "messageUpdated",
             new Message(eventData.message, this.client)
           );
           break;
         case "ChatMessageDeleted":
-          if (eventData.message.createdBy === this.botID) break;
           this.emit(
             "messageDeleted",
             new Message(eventData.message, this.client)

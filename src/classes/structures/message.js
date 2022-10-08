@@ -75,8 +75,8 @@ class Message {
                 channelId: messageData.channelId,
                 isPrivate: false,
                 isSilent: false,
-              },
-              client
+                client: this.client,
+              }
             );
           case "object":
             return msgs.sendMessage(
@@ -90,8 +90,8 @@ class Message {
                   : null,
                 embeds: content.embeds ? content.embeds : null,
                 attachments: content.attachments ? content.attachments : null,
-              },
-              client
+                client: this.client,
+              }
             );
         }
       },
@@ -273,8 +273,8 @@ class Message {
               isPrivate: false,
               isSilent: false,
               replyMessageIds: [this.id],
-            },
-            client
+              client: this.client,
+            }
           );
         case "object":
           return msgs.sendMessage(
@@ -286,8 +286,8 @@ class Message {
               replyMessageIds: [this.id],
               embeds: content.embeds ? content.embeds : null,
               attachments: content.attachments ? content.attachments : null,
-            },
-            client
+              client: this.client,
+            }
           );
       }
     };
@@ -315,8 +315,8 @@ class Message {
               channelId: messageData.channelId,
               isPrivate: false,
               isSilent: false,
-            },
-            client
+              client: this.client,
+            }
           );
         case "object":
           return msgs.editMessage(
@@ -329,8 +329,8 @@ class Message {
               replyMessageIds: [this.id],
               embeds: content.embeds ? content.embeds : null,
               attachments: content.attachments ? content.attachments : null,
-            },
-            client
+              client: this.client,
+            }
           );
       }
     };
@@ -350,8 +350,8 @@ class Message {
           id: this.id,
           channelId: messageData.channelId,
           timeout: object.timeout ? object.timeout : 0,
-        },
-        client
+          client: this.client,
+        }
       );
     };
 
@@ -370,8 +370,8 @@ class Message {
           id: this.id,
           channelId: messageData.channelId,
           emojiId: emoji ?? 90001164,
-        },
-        client
+          client: this.client,
+        }
       );
     };
 
@@ -393,8 +393,8 @@ class Message {
           {
             id: userId ?? this.author.id,
             serverId: messageData.serverId,
-          },
-          client
+            client: client,
+          }
         );
 
         // Add the user to the cache
@@ -418,8 +418,8 @@ class Message {
         {
           id: userId ?? this.author.id,
           serverId: messageData.serverId,
-        },
-        client
+          client: client,
+        }
       );
       return member;
     };

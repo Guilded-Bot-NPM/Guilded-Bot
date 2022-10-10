@@ -1,6 +1,5 @@
 const { endpoints } = require("./endpoints");
 const axios = require("axios");
-const Message = require("../classes/structures/message");
 
 /**
  * Send a message to a selected channel
@@ -44,6 +43,7 @@ module.exports.sendMessage = async (MessageObject) => {
       },
     })
     .then((res) => {
+      const Message = require("../classes/structures/message");
       //Make a new message object
       return new Message(res.data.message, MessageObject.client);
     })
@@ -98,6 +98,7 @@ module.exports.editMessage = async (MessageObject) => {
       },
     })
     .then((res) => {
+      const Message = require("../classes/structures/message");
       //Make a new message object
       return new Message(res.data.message, MessageObject.client);
     })
@@ -132,6 +133,7 @@ module.exports.deleteMessage = async (MessageObject) => {
       },
     })
     .then((res) => {
+      const Message = require("../classes/structures/message");
       //Make a new message object
       if (res.status === 204) {
         return "Message deleted";

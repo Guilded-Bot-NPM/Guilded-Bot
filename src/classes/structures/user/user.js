@@ -104,36 +104,6 @@ class User {
      */
     this.raw = userData;
 
-
-    if (global.cache.users.has(this.id)) {
-      const oldData = global.cache.users.get(this.id);
-      for (const key in this.raw) {
-        if (Boolean(this.raw[key]) &&
-          (oldData[key] !== this.raw[key] || oldData[key] === undefined || oldData[key] === null)) {
-          oldData[key] = this[key];
-        }
-      }
-      global.cache.users.set(this.id, oldData);
-
-      // Set all data to this
-      for (const key in oldData) {
-        if (key === "createdTimestamp") continue;
-
-        // If exists in this
-        if (this[key] !== undefined && this[key] !== null) {
-          this[key] = oldData[key];
-        }
-
-        // Check the createdTimestamp, if exist createdAt, and is a date, create the createdTimestamp
-        if (key === "createdAt" && this.createdAt instanceof Date) {
-          this.createdTimestamp = this.createdAt.getTime();
-        }
-
-      }
-    } else {
-      global.cache.users.set(this.id, this);
-    }
-
     if (userData.serverId) {
       /**
        * Function will return the user's profile picture
@@ -152,6 +122,21 @@ class User {
         const user = await member.updateBannerUser(this);
         return user.banner;
       };
+
+      if (client.utils.hasUser(this)) {
+        const oldData = client.utils.getUser(this);
+
+        for (const key in oldData) {
+          if (
+            this[key] === undefined ||
+            this[key] === null ||
+            this[key] === "" ||
+            isNaN(this[key])
+          ) {
+            this[key] = oldData[key];
+          }
+        }
+      } else client.utils.saveUser(this);
     }
   }
 }

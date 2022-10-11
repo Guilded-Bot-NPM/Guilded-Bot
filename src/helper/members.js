@@ -26,7 +26,7 @@ exports.updateAvatarUser = async (User) => {
     }
   }
 
-  User.client.cache.users.set(User.id, User);
+  User.client.utils.saveUser(this)
 
   return User;
 };
@@ -82,16 +82,17 @@ exports.getMember = async (User) => {
  * @ignore
  */
 exports.getUser = async (User) => {
-  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.serverId, User.id)}`, User.client);
+
+  const userData = await GET(`${endpoints.SERVER_MEMBERS(User.raw.serverId, User.id)}`, User.client);
+
+  if(userData.status>=400) return User;
+
+  userData.member.user.raw = {
+    ...userData.member.user.raw,
+    serverId: User.raw.serverId
+  }
 
   const newUser = new NewUser(userData.member.user, User.client);
 
-  // Check properties of new user and old user
-  for (const property in newUser) {
-    if (newUser[property] !== User[property] && Boolean(User[property])) {
-      User[property] = newUser[property];
-    }
-  }
-
-  return User;
+  return newUser;
 };

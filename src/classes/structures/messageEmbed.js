@@ -115,6 +115,7 @@ class MessageEmbed {
         break;
     }
 
+    this.color = color;
     return this;
   }
 
@@ -147,8 +148,8 @@ class MessageEmbed {
    * embed.setTime(new Date());
    * embed.setTime(Date.now());
    */
-  setTimestamp(timestamp = new Date().toISOString()) {
-    if (timestamp instanceof Date) return this;
+  setTimestamp(timestamp = new Date()) {
+    if (!(timestamp instanceof Date)) return this;
     this.timestamp = timestamp.toISOString();
     return this;
   }

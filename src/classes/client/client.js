@@ -42,6 +42,13 @@ class Client extends EventEmitter {
      * @readonly
      */
     this.options = options
+
+    /**
+     * Utils of the bot
+     * @type {Object}
+     * @readonly
+     */
+    this.utils = require('../../utils/utils.js')
   }
 
   /**
